@@ -76,7 +76,7 @@ namespace classes::server_side {
                     }
                     string data(buffer, valread);
                     auto action = ServerAction::Deserialize(data);
-                    PushAction(&tmpClient, &action);
+                    PushAction(&tmpClient, action);
 
                     auto resp = tmpClient.GetResponse();
                     if (!tmpClient.PoppedEmptyFlag) {
@@ -157,7 +157,7 @@ namespace classes::server_side {
         //endregion
     }
 
-    void Server::PushAction(RegisteredClient *client, ServerAction *act) {
+    void Server::PushAction(RegisteredClient *client, ServerAction act) {
         {
             //Critical Section
             lock_guard<mutex> guard(m_EnqueuedActions);
@@ -165,7 +165,7 @@ namespace classes::server_side {
         }
     }
 
-    tuple<RegisteredClient *, ServerAction *> Server::NextAction() {
+    tuple<RegisteredClient *, ServerAction > Server::NextAction() {
         {
             //Critical Section
             lock_guard<mutex> guard(m_EnqueuedActions);
@@ -177,7 +177,7 @@ namespace classes::server_side {
 
     void Server::EnactRespond() {
         while (Running) {
-            ServerAction *currentAct = nullptr;
+            ServerAction currentAct = {};
             RegisteredClient *currentRequester = nullptr;
 
             {
@@ -185,30 +185,30 @@ namespace classes::server_side {
                 if (EnqueuedActions.empty()) {
                     continue; // Skips to the next iteration of the while loop if the queue is empty
                 } else {
-                    auto &front = EnqueuedActions.front();
-                    currentRequester = get<0>(front);
-                    currentAct = get<1>(front);
+                    auto [r,a] = NextAction();
+                    currentRequester = r;
+                    currentAct = a;
                     EnqueuedActions.pop(); // Remove the processed action from the queue
                 }
             }
 
-            if (currentAct == nullptr || currentRequester == nullptr) {
-                continue; // Safeguard against null actions or requesters
+            if (currentRequester == nullptr) {
+                continue;
             }
 
             StreamableString logSS;
-            stringstream ss(currentAct->Data);
+            stringstream ss(currentAct.Data);
             unsigned long long id;
             string key;
 
-            switch (currentAct->ActionType) {
+            switch (currentAct.ActionType) {
                 case ServerActionType::SendMessage: {
                     unsigned long long rID;
                     string msg;
                     ss >> id >> key >> rID >> msg;
                     if (VerifyIdentity(id, key)) {
                         bool found = false;
-                        ChatroomHost *room;
+                        ChatroomHost *room = nullptr;
                         {
                             lock_guard<mutex> guard(m_Clients);
                             for (auto &curR: Rooms) {
@@ -226,14 +226,13 @@ namespace classes::server_side {
                         if (!room) {
                             currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
                                                                         currentRequester->Connection.Address,
-                                                                        "msg'Cannot find requested room.'"));
+                                                                        "Cannot find requested room."));
                             continue;
                         }
                         if (!found) {
                             currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
                                                                         currentRequester->Connection.Address,
-                                                                        "msg'You can't send a message to a"
-                                                                        "chat room you are not a member of.'"));
+                                                                        "You can't send a message to a chat room you are not a member of."));
                             continue;
                         }
                         {
@@ -256,12 +255,11 @@ namespace classes::server_side {
                               << id
                               << "'";
                         ServerLog.emplace_back(logSS);
-                        room->PushMessage(id,msg);
+                        room->PushMessage(id, msg);
                     } else {
                         currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
                                                                     currentRequester->Connection.Address,
-                                                                    "msg'Invalid credentials, failed to"
-                                                                    "send message.'"));
+                                                                    "Invalid credentials, failed to send message."));
                     }
                     break;
                 }
@@ -285,35 +283,31 @@ namespace classes::server_side {
                     {
                         lock_guard<mutex> guard(m_Clients);
 
-
                         for (auto &c: Clients) {
                             if (c.ClientID == id) {
                                 if (c.LoginKey == key) {
                                     client = &c;
                                     break;
                                 } else {
-                                    currentRequester->PushResponse(ClientAction(
-                                            ClientActionType::InformActionFailure,
-                                            currentRequester->Connection.Address,
-                                            "msg'Invalid credentials, Login failed'"));
+                                    currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
+                                                                                currentRequester->Connection.Address,
+                                                                                "Invalid credentials, Login failed"));
                                     continue;
                                 }
                             }
                         }
 
                         if (!client) {
-                            currentRequester->PushResponse(ClientAction(
-                                    ClientActionType::InformActionFailure,
-                                    currentRequester->Connection.Address,
-                                    "msg'Invalid credentials, Login failed'"));
+                            currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
+                                                                        currentRequester->Connection.Address,
+                                                                        "Invalid credentials, Login failed"));
                             continue;
                         }
 
                         if (currentRequester->IsConnected) {
-                            currentRequester->PushResponse(ClientAction(
-                                    ClientActionType::InformActionFailure,
-                                    currentRequester->Connection.Address,
-                                    "msg'Nothing to do, you are already logged in'"));
+                            currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
+                                                                        currentRequester->Connection.Address,
+                                                                        "Nothing to do, you are already logged in"));
                             continue;
                         }
 
@@ -330,7 +324,7 @@ namespace classes::server_side {
                         }
                         client->PushResponse(ClientAction(ClientActionType::InformActionSuccess,
                                                           client->Connection.Address,
-                                                          ServerName + " msg'You were logged in successfully'"));
+                                                          ServerName + " You were logged in successfully"));
                         logSS << "Client: '" << client->DisplayName << "#" << client->ClientID << "' has logged in";
                         ServerLog.emplace_back(logSS);
                     }
@@ -349,10 +343,9 @@ namespace classes::server_side {
                                     client = &c;
                                     break;
                                 } else {
-                                    currentRequester->PushResponse(ClientAction(
-                                            ClientActionType::InformActionFailure,
-                                            currentRequester->Connection.Address,
-                                            "msg'Invalid credentials, Logout failed'"));
+                                    currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
+                                                                                currentRequester->Connection.Address,
+                                                                                "Invalid credentials, Logout failed"));
                                     continue;
                                 }
                             }
@@ -360,7 +353,7 @@ namespace classes::server_side {
                         client->IsConnected = false;
                         client->PushResponse(ClientAction(ClientActionType::InformActionSuccess,
                                                           client->Connection.Address,
-                                                          "msg'You were successfully logged out'",
+                                                          "You were successfully logged out",
                                                           true));
                         logSS << "Client: '" << client->DisplayName << "#" << client->ClientID << "' has logged out";
                         ServerLog.emplace_back(logSS);
@@ -370,43 +363,226 @@ namespace classes::server_side {
                 case ServerActionType::CreateChatroom: {
                     string roomName;
                     ss >> id >> key >> roomName;
-                    if(VerifyIdentity(id,key)){
-                        RegisteredClient *admin;
+                    if (VerifyIdentity(id, key)) {
+                        RegisteredClient *admin = nullptr;
                         {
                             lock_guard<mutex> guard(m_Clients);
-                            for(auto &curCl: Clients)
-                                if(curCl.ClientID==id)
-                                    admin=&curCl;
+                            for (auto &curCl: Clients)
+                                if (curCl.ClientID == id)
+                                    admin = &curCl;
                         }
-                        ChatroomHost newCR= ChatroomHost(roomName,admin);
+                        ChatroomHost newCR = ChatroomHost(roomName, admin);
                         Rooms.push_back(newCR);
                         {
                             lock_guard<mutex> guard(m_Clients);
-                            logSS
-                            << "Client: '"
-                            << admin->DisplayName
-                            << "#"
-                            << admin->ClientID
-                            << "' Created the new chatroom: '"
-                            << newCR.DisplayName
-                            << "#"
-                            << newCR.RoomID
-                            << "'";
+                            logSS << "Client: '"
+                                  << admin->DisplayName
+                                  << "#"
+                                  << admin->ClientID
+                                  << "' Created the new chatroom: '"
+                                  << newCR.DisplayName
+                                  << "#"
+                                  << newCR.RoomID
+                                  << "'";
                             ServerLog.emplace_back(logSS);
                         }
+
+                        currentRequester->PushResponse(ClientAction(ClientActionType::InformActionSuccess,
+                                                                    currentRequester->Connection.Address,
+                                                                    to_string(newCR.RoomID) + " Chat room was created"));
+                        currentRequester->PushResponse(ClientAction(ClientActionType::JoinedChatroom,
+                                                                    currentRequester->Connection.Address,
+                                                                    to_string(newCR.RoomID) + " " + newCR.DisplayName));
+                    } else {
+                        currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
+                                                                    currentRequester->Connection.Address,
+                                                                    "Invalid credentials"));
                     }
                     break;
                 }
                 case ServerActionType::RemoveChatroom: {
-                    // Handle RemoveChatroom
+                    unsigned long long rID;
+                    ChatroomHost *room = nullptr;
+                    ss >> id >> key >> rID;
+                    if (VerifyIdentity(id, key)) {
+                        for (auto &curR: Rooms) {
+                            if (curR.RoomID == rID) {
+                                room = &curR;
+                                break;
+                            }
+                        }
+                        if (!room) {
+                            currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
+                                                                        currentRequester->Connection.Address,
+                                                                        "Failed to find requested room"));
+                            continue;
+                        }
+                        if (room->Admin->ClientID != id) {
+                            currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
+                                                                        currentRequester->Connection.Address,
+                                                                        "You must be the room's admin in order to delete it"));
+                            continue;
+                        }
+                        auto it = find_if(Rooms.begin(), Rooms.end(),
+                                          [rID](const ChatroomHost &cr) -> bool {
+                                              return cr.RoomID == rID;
+                                          });
+                        if (it != Rooms.end()) {
+                            for (auto &curMem: room->Members)
+                                curMem.PushResponse(ClientAction(ClientActionType::LeftChatroom,
+                                                                 curMem.Connection.Address,
+                                                                 to_string(room->RoomID) + " This room was deleted by the admin."));
+                            Rooms.erase(it);
+                        }
+                    }
                     break;
                 }
                 case ServerActionType::AddChatRoomMember: {
-                    // Handle AddChatRoomMember
+                    unsigned long long rID, newMemberID;
+                    ss >> id >> key >> rID >> newMemberID;
+                    if (!VerifyIdentity(id, key)) {
+                        currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
+                                                                    currentRequester->Connection.Address,
+                                                                    "Invalid credentials"));
+                        continue;
+                    }
+
+                    ChatroomHost *room = nullptr;
+                    RegisteredClient *newMember = nullptr;
+                    {
+                        lock_guard<mutex> guard(m_Clients);
+                        for (auto &curR: Rooms) {
+                            if (curR.RoomID == rID) {
+                                room = &curR;
+                                break;
+                            }
+                        }
+                        for (auto &curCl: Clients) {
+                            if (curCl.ClientID == newMemberID) {
+                                newMember = &curCl;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!room) {
+                        currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
+                                                                    currentRequester->Connection.Address,
+                                                                    "Chatroom not found"));
+                        continue;
+                    }
+
+                    if (room->Admin->ClientID != id) {
+                        currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
+                                                                    currentRequester->Connection.Address,
+                                                                    "Only the admin can add members"));
+                        continue;
+                    }
+
+                    if (!newMember) {
+                        currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
+                                                                    currentRequester->Connection.Address,
+                                                                    "New member not found"));
+                        continue;
+                    }
+
+                    room->Members.push_back(*newMember);
+                    newMember->PushResponse(ClientAction(ClientActionType::JoinedChatroom,
+                                                         newMember->Connection.Address,
+                                                         to_string(room->RoomID) + " " + room->DisplayName));
+                    StreamableString joinMSG;
+                    joinMSG << id << key << rID << "Admin added a member to this room: '"
+                    << newMember->DisplayName << "#" << newMember->ClientID << "'";
+                    PushAction(currentRequester,ServerAction(general::ServerActionType::SendMessage,
+                                            currentRequester->Connection.Address,
+                                                             (string)joinMSG));
+
+                    logSS << "Client: '"
+                          << newMember->DisplayName
+                          << "#"
+                          << newMember->ClientID
+                          << "' was added to chatroom: '"
+                          << room->DisplayName
+                          << "#"
+                          << room->RoomID
+                          << "'";
+                    ServerLog.emplace_back(logSS);
                     break;
                 }
                 case ServerActionType::RemoveChatroomMember: {
-                    // Handle RemoveChatroomMember
+                    unsigned long long rID, memberID;
+                    ss >> id >> key >> rID >> memberID;
+                    if (!VerifyIdentity(id, key)) {
+                        currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
+                                                                    currentRequester->Connection.Address,
+                                                                    "Invalid credentials"));
+                        continue;
+                    }
+
+                    ChatroomHost *room = nullptr;
+                    RegisteredClient *member = nullptr;
+                    {
+                        lock_guard<mutex> guard(m_Clients);
+                        for (auto &curR: Rooms) {
+                            if (curR.RoomID == rID) {
+                                room = &curR;
+                                break;
+                            }
+                        }
+                        for (auto &curCl: Clients) {
+                            if (curCl.ClientID == memberID) {
+                                member = &curCl;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!room) {
+                        currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
+                                                                    currentRequester->Connection.Address,
+                                                                    "Chatroom not found"));
+                        continue;
+                    }
+
+                    if (room->Admin->ClientID != id && memberID != id) {
+                        currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
+                                                                    currentRequester->Connection.Address,
+                                                                    "Only the admin or the member themselves can remove members"));
+                        continue;
+                    }
+
+                    if (!member) {
+                        currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
+                                                                    currentRequester->Connection.Address,
+                                                                    "Member not found"));
+                        continue;
+                    }
+
+                    auto it = find_if(room->Members.begin(), room->Members.end(),
+                                      [memberID](const RegisteredClient &m) {
+                                          return m.ClientID == memberID;
+                                      });
+
+                    if (it != room->Members.end()) {
+                        room->Members.erase(it);
+                        member->PushResponse(ClientAction(ClientActionType::LeftChatroom,
+                                                          member->Connection.Address,
+                                                          to_string(room->RoomID) + " " + room->DisplayName));
+                        logSS << "Client: '"
+                              << member->DisplayName
+                              << "#"
+                              << member->ClientID
+                              << "' was removed from chatroom: '"
+                              << room->DisplayName
+                              << "#"
+                              << room->RoomID
+                              << "'";
+                        ServerLog.emplace_back(logSS);
+                    } else {
+                        currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
+                                                                    currentRequester->Connection.Address,
+                                                                    "Member not found in the chatroom"));
+                    }
                     break;
                 }
             }
@@ -419,7 +595,7 @@ namespace classes::server_side {
             for (auto &c: Clients) {
                 if (c.ClientID == id) {
                     if (c.LoginKey == key) {
-                        return true;
+                        return c.IsConnected;
                     } else {
                         return false;
                     }

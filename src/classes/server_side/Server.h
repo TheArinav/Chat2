@@ -47,13 +47,13 @@ namespace classes::server_side {
         void Start();
         void Stop();
 
-        void PushAction(RegisteredClient *client,ServerAction *act);
+        void PushAction(RegisteredClient *client,ServerAction act);
     private:
         atomic<bool> Running;
         mutex m_EnqueuedActions;
-        queue<tuple<RegisteredClient*,ServerAction*>> EnqueuedActions;
+        queue<tuple<RegisteredClient*,ServerAction>> EnqueuedActions;
         void Setup();
-        tuple<RegisteredClient*,ServerAction*> NextAction();
+        tuple<RegisteredClient*,ServerAction> NextAction();
         void EnactRespond();
         bool VerifyIdentity(unsigned long long id, const string& key);
     };
