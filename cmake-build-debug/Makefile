@@ -153,6 +153,54 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+src/classes/client_side/Account.o: src/classes/client_side/Account.cpp.o
+.PHONY : src/classes/client_side/Account.o
+
+# target to build an object file
+src/classes/client_side/Account.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.o
+.PHONY : src/classes/client_side/Account.cpp.o
+
+src/classes/client_side/Account.i: src/classes/client_side/Account.cpp.i
+.PHONY : src/classes/client_side/Account.i
+
+# target to preprocess a source file
+src/classes/client_side/Account.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.i
+.PHONY : src/classes/client_side/Account.cpp.i
+
+src/classes/client_side/Account.s: src/classes/client_side/Account.cpp.s
+.PHONY : src/classes/client_side/Account.s
+
+# target to generate assembly for a file
+src/classes/client_side/Account.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.s
+.PHONY : src/classes/client_side/Account.cpp.s
+
+src/classes/client_side/ServerConnection.o: src/classes/client_side/ServerConnection.cpp.o
+.PHONY : src/classes/client_side/ServerConnection.o
+
+# target to build an object file
+src/classes/client_side/ServerConnection.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.o
+.PHONY : src/classes/client_side/ServerConnection.cpp.o
+
+src/classes/client_side/ServerConnection.i: src/classes/client_side/ServerConnection.cpp.i
+.PHONY : src/classes/client_side/ServerConnection.i
+
+# target to preprocess a source file
+src/classes/client_side/ServerConnection.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.i
+.PHONY : src/classes/client_side/ServerConnection.cpp.i
+
+src/classes/client_side/ServerConnection.s: src/classes/client_side/ServerConnection.cpp.s
+.PHONY : src/classes/client_side/ServerConnection.s
+
+# target to generate assembly for a file
+src/classes/client_side/ServerConnection.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.s
+.PHONY : src/classes/client_side/ServerConnection.cpp.s
+
 src/classes/general/ClientAction.o: src/classes/general/ClientAction.cpp.o
 .PHONY : src/classes/general/ClientAction.o
 
@@ -297,6 +345,30 @@ src/classes/server_side/Server.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.s
 .PHONY : src/classes/server_side/Server.cpp.s
 
+src/testing/TestScript1.o: src/testing/TestScript1.cpp.o
+.PHONY : src/testing/TestScript1.o
+
+# target to build an object file
+src/testing/TestScript1.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.o
+.PHONY : src/testing/TestScript1.cpp.o
+
+src/testing/TestScript1.i: src/testing/TestScript1.cpp.i
+.PHONY : src/testing/TestScript1.i
+
+# target to preprocess a source file
+src/testing/TestScript1.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.i
+.PHONY : src/testing/TestScript1.cpp.i
+
+src/testing/TestScript1.s: src/testing/TestScript1.cpp.s
+.PHONY : src/testing/TestScript1.s
+
+# target to generate assembly for a file
+src/testing/TestScript1.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.s
+.PHONY : src/testing/TestScript1.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -309,6 +381,12 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... src/classes/client_side/Account.o"
+	@echo "... src/classes/client_side/Account.i"
+	@echo "... src/classes/client_side/Account.s"
+	@echo "... src/classes/client_side/ServerConnection.o"
+	@echo "... src/classes/client_side/ServerConnection.i"
+	@echo "... src/classes/client_side/ServerConnection.s"
 	@echo "... src/classes/general/ClientAction.o"
 	@echo "... src/classes/general/ClientAction.i"
 	@echo "... src/classes/general/ClientAction.s"
@@ -327,6 +405,9 @@ help:
 	@echo "... src/classes/server_side/Server.o"
 	@echo "... src/classes/server_side/Server.i"
 	@echo "... src/classes/server_side/Server.s"
+	@echo "... src/testing/TestScript1.o"
+	@echo "... src/testing/TestScript1.i"
+	@echo "... src/testing/TestScript1.s"
 .PHONY : help
 
 

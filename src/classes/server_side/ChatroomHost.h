@@ -2,6 +2,7 @@
 #define CHAT2_CHATROOMHOST_H
 
 #include <vector>
+#include <tuple>
 #include <map>
 #include <string>
 
@@ -16,7 +17,7 @@ namespace classes::server_side {
         string DisplayName;
         RegisteredClient *Admin;
         vector<RegisteredClient> Members;
-        map<unsigned long long, string> Messages;
+        map<int,tuple<unsigned long long, string>> Messages;
 
         ChatroomHost();
         explicit ChatroomHost(string name, RegisteredClient *Admin);

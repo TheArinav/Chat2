@@ -85,6 +85,18 @@
 		<Unit filename="/tmp/tmp.0iHHDiwury/main.cpp">
 			<Option target="Chat2"/>
 		</Unit>
+		<Unit filename="/tmp/tmp.0iHHDiwury/src/classes/client_side/Account.cpp">
+			<Option target="Chat2"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.0iHHDiwury/src/classes/client_side/Account.h">
+			<Option target="Chat2"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.0iHHDiwury/src/classes/client_side/ServerConnection.cpp">
+			<Option target="Chat2"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.0iHHDiwury/src/classes/client_side/ServerConnection.h">
+			<Option target="Chat2"/>
+		</Unit>
 		<Unit filename="/tmp/tmp.0iHHDiwury/src/classes/general/ClientAction.cpp">
 			<Option target="Chat2"/>
 		</Unit>
@@ -125,6 +137,12 @@
 			<Option target="Chat2"/>
 		</Unit>
 		<Unit filename="/tmp/tmp.0iHHDiwury/src/classes/server_side/Server.h">
+			<Option target="Chat2"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.0iHHDiwury/src/testing/TestScript1.cpp">
+			<Option target="Chat2"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.0iHHDiwury/src/testing/TestScript1.h">
 			<Option target="Chat2"/>
 		</Unit>
 		<Unit filename="/tmp/tmp.0iHHDiwury/CMakeLists.txt">

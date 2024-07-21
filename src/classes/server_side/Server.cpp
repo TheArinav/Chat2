@@ -1,6 +1,7 @@
 #include "Server.h"
 
 #include <utility>
+#include <iostream>
 #include <arpa/inet.h>
 #include <sstream>
 #include "../general/StreamableString.h"
@@ -27,10 +28,10 @@ namespace classes::server_side {
         if (ServerFD > 0)
             shutdown(ServerFD, SHUT_RDWR);
         Running.store(false);
-        if (ListenerThread)
+        if (ListenerThread->joinable())
             ListenerThread->join();
         delete ListenerThread;
-        if (EnactRespondThread)
+        if (EnactRespondThread->joinable())
             EnactRespondThread->join();
         delete EnactRespondThread;
     }
@@ -116,46 +117,51 @@ namespace classes::server_side {
         hints.ai_flags = AI_PASSIVE;
 
         int result = getaddrinfo(nullptr, ServerPort, &hints, &servInf);
-        if (result)
-            throw runtime_error("getaddrinfo() failed!");
+        if (result != 0) {
+            std::cerr << "getaddrinfo: " << gai_strerror(result) << std::endl;
+            throw std::runtime_error("getaddrinfo() failed!");
+        }
+
+        ServerSocket = std::make_unique<AddressInfo>(*servInf);
+
         //region SocketCreate
         AddressInfo *p;
-        string err;
+        std::string err;
         for (p = ServerSocket.get(); p != nullptr; p = p->ai_next) {
             ServerFD = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
-            if (!(ServerFD + 1)) {
-                err = "socket() failed!";
+            if (ServerFD == -1) {
+                perror("socket");
                 continue;
             }
+
             int yes = 1;
             if (setsockopt(ServerFD, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
+                perror("setsockopt");
                 close(ServerFD);
                 err = "setsockopt() failed!";
-                break;
-            }
-            break;
-        }
-        if (p == nullptr) {
-            throw runtime_error(err);
-            exit(EXIT_FAILURE);
-        }
-        //endregion
-
-        //region SocketBind
-        for (p = ServerSocket.get(); p != nullptr; p = p->ai_next) {
-            if (bind(ServerFD, p->ai_addr, p->ai_addrlen) == -1) {
-                close(ServerFD);
-                err = "bind() failed!";
                 continue;
             }
-            break;
+
+            // Try to bind the socket
+            if (bind(ServerFD, p->ai_addr, p->ai_addrlen) == -1) {
+                perror("bind");
+                close(ServerFD);
+                ServerFD = -1; // Reset ServerFD for next attempt
+                continue;
+            }
+
+            break; // Successfully bound the socket
         }
+
         if (p == nullptr) {
-            throw runtime_error(err);
-            exit(EXIT_FAILURE);
+            freeaddrinfo(servInf);
+            throw std::runtime_error("Failed to bind any address!");
         }
+
+        freeaddrinfo(servInf);
         //endregion
     }
+
 
     void Server::PushAction(RegisteredClient *client, ServerAction act) {
         {
@@ -176,7 +182,7 @@ namespace classes::server_side {
     }
 
     void Server::EnactRespond() {
-        while (Running) {
+        while (Running.load()) {
             ServerAction currentAct = {};
             RegisteredClient *currentRequester = nullptr;
 
@@ -275,6 +281,9 @@ namespace classes::server_side {
                         logSS << "Created client: '" << newCl.DisplayName << "#" << newCl.ClientID << "'";
                         ServerLog.emplace_back(logSS);
                     }
+                    currentRequester->PushResponse(ClientAction(ClientActionType::InformActionSuccess,
+                                                                currentRequester->Connection.Address,
+                                                                to_string(newCl.ClientID)));
                     break;
                 }
                 case ServerActionType::LoginClient: {
