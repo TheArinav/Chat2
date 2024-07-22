@@ -19,14 +19,13 @@ namespace classes::server_side {
         unsigned long long ClientID;
         string DisplayName;
         string LoginKey;
-        ClientConnection Connection;
+        unique_ptr<ClientConnection> Connection;
         bool IsConnected;
         bool PoppedEmptyFlag;
 
         RegisteredClient();
         explicit RegisteredClient(string);
-        RegisteredClient(const RegisteredClient&);
-        RegisteredClient &operator=(const RegisteredClient &other);
+        RegisteredClient(RegisteredClient&);
         RegisteredClient(RegisteredClient &&other) noexcept;
         RegisteredClient &operator=(RegisteredClient &&other) noexcept;
 

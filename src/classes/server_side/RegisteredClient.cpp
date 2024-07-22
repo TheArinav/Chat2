@@ -50,11 +50,11 @@ namespace classes::server_side {
         m_AwaitingResponses = make_unique<mutex>();
     }
 
-    RegisteredClient::RegisteredClient(const RegisteredClient &other) {
+    RegisteredClient::RegisteredClient(RegisteredClient &other) {
         this->ClientID = other.ClientID;
         this->DisplayName = other.DisplayName;
-        this->IsConnected = other.IsConnected;
-        this->Connection = ClientConnection(other.Connection);
+        this->IsConnected= other.IsConnected;
+        this->Connection= move(other.Connection);
         this->PoppedEmptyFlag = other.PoppedEmptyFlag;
 
         // Deep copy of the mutex and the responses
@@ -63,24 +63,6 @@ namespace classes::server_side {
         this->AwaitingResponses = other.AwaitingResponses;
     }
 
-    RegisteredClient &RegisteredClient::operator=(const RegisteredClient &other) {
-        if (this == &other) {
-            return *this;
-        }
-
-        this->ClientID = other.ClientID;
-        this->DisplayName = other.DisplayName;
-        this->IsConnected = other.IsConnected;
-        this->Connection = ClientConnection(other.Connection);
-        this->PoppedEmptyFlag = other.PoppedEmptyFlag;
-
-        // Deep copy of the mutex and the responses
-        this->m_AwaitingResponses = make_unique<mutex>();
-        lock_guard<mutex> guard(*other.m_AwaitingResponses);
-        this->AwaitingResponses = other.AwaitingResponses;
-
-        return *this;
-    }
 
     RegisteredClient::RegisteredClient(RegisteredClient &&other) noexcept {
         this->ClientID = other.ClientID;
@@ -94,9 +76,13 @@ namespace classes::server_side {
         this->AwaitingResponses = std::move(other.AwaitingResponses);
 
         // Reset the state of the moved-from object
-        other.ClientID = 0;
-        other.IsConnected = false;
-        other.PoppedEmptyFlag = false;
+        other.ClientID=-1;
+        other.PoppedEmptyFlag= false;
+        other.AwaitingResponses.clear();
+        other.IsConnected= false;
+        other.DisplayName.clear();
+        other.LoginKey.clear();
+        other.Connection=nullptr;
     }
 
     RegisteredClient &RegisteredClient::operator=(RegisteredClient &&other) noexcept {
@@ -115,9 +101,13 @@ namespace classes::server_side {
         this->AwaitingResponses = std::move(other.AwaitingResponses);
 
         // Reset the state of the moved-from object
-        other.ClientID = 0;
-        other.IsConnected = false;
-        other.PoppedEmptyFlag = false;
+        other.ClientID=-1;
+        other.PoppedEmptyFlag= false;
+        other.AwaitingResponses.clear();
+        other.IsConnected= false;
+        other.DisplayName.clear();
+        other.LoginKey.clear();
+        other.Connection=nullptr;
 
         return *this;
     }

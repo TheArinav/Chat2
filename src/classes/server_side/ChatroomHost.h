@@ -16,7 +16,7 @@ namespace classes::server_side {
         unsigned long long RoomID;
         string DisplayName;
         RegisteredClient *Admin;
-        vector<RegisteredClient> Members;
+        vector<RegisteredClient*> Members;
         map<int,tuple<unsigned long long, string>> Messages;
 
         ChatroomHost();

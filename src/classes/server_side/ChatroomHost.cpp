@@ -11,7 +11,7 @@ namespace classes::server_side {
     }
     ChatroomHost::ChatroomHost(string name, RegisteredClient *Admin) :
     DisplayName(move(name)){
-        Members.push_back(*Admin);
+        Members.push_back(Admin);
         this->Admin=Admin;
     }
 
