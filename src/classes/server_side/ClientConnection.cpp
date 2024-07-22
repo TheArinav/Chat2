@@ -13,7 +13,7 @@ namespace classes::server_side {
 
     ClientConnection::ClientConnection(const ClientConnection &other)
             : Address(other.Address), FileDescriptor(other.FileDescriptor), ThreadInitialized(other.ThreadInitialized),
-              StopFlag(make_unique<atomic<bool>>(other.StopFlag.get())), ListenerFunction(other.ListenerFunction) {
+              StopFlag(make_unique<atomic<bool>>((bool)other.StopFlag.get())), ListenerFunction(other.ListenerFunction) {
         if (other.ThreadInitialized) {
             ManagerThread = new thread([this] {
                 while (!StopFlag->load()) {
@@ -35,7 +35,7 @@ namespace classes::server_side {
         Address = other.Address;
         FileDescriptor = other.FileDescriptor;
         ThreadInitialized = other.ThreadInitialized;
-        StopFlag = make_unique<atomic<bool>>(other.StopFlag.get());
+        StopFlag = make_unique<atomic<bool>>((bool)other.StopFlag.get());
         ListenerFunction = other.ListenerFunction;
 
         if (other.ThreadInitialized) {

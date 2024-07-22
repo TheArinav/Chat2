@@ -40,9 +40,8 @@ namespace classes::server_side {
         int ServerFD;
 
 
-        Server();
         ~Server();
-        explicit Server(string name);
+        Server(string&& name);
 
         void Start();
         void Stop();

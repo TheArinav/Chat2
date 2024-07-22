@@ -3,7 +3,8 @@
 #include <utility>
 #include <iostream>
 #include <arpa/inet.h>
-#include <sstream>
+
+#include "RegisteredClient.h"
 #include "../general/StreamableString.h"
 
 typedef sockaddr_storage SocketAddressStorage;
@@ -20,10 +21,6 @@ namespace classes::server_side {
         return &(((struct sockaddr_in6 *) sa)->sin6_addr);
     }
 
-    Server::Server() {
-        Setup();
-    }
-
     Server::~Server() {
         if (ServerFD > 0)
             shutdown(ServerFD, SHUT_RDWR);
@@ -36,7 +33,7 @@ namespace classes::server_side {
         delete EnactRespondThread;
     }
 
-    Server::Server(string name) :
+    Server::Server(string&& name) :
             ServerName(move(name)) {
         Setup();
     }
@@ -44,8 +41,9 @@ namespace classes::server_side {
     void Server::Start() {
         Running.store(true);
         ListenerThread = new thread([this]() {
-            string err;
+            std::string err="";
             if (listen(ServerFD, 10) == -1) {
+                cerr << "Listen() failure, cause:\n\t" << strerror(errno) << "\n";
                 return;
             }
 
@@ -65,12 +63,12 @@ namespace classes::server_side {
                 unique_ptr<ClientConnection> conn = make_unique<ClientConnection>();
                 conn->FileDescriptor = newFD;
                 memcpy(&conn->Address, &addr, sizeof(conn->Address));
-                auto tmpClient = RegisteredClient("Guest");
+                auto tmpClient = RegisteredClient((string)"Guest");
                 tmpClient.Connection = move(conn);
 
                 tmpClient.Connection->Start([&tmpClient, this](int fd) {
                     char buffer[1024] = {0};
-                    ssize_t valread = recv(tmpClient.Connection->FileDescriptor, &buffer, sizeof buffer, 0);
+                    ssize_t valread = recv(tmpClient.Connection->FileDescriptor, (char*)&buffer, sizeof (buffer), 0);
                     if (valread < 0) {
                         close(tmpClient.Connection->FileDescriptor);
                         return;
@@ -106,6 +104,8 @@ namespace classes::server_side {
     }
 
     void Server::Setup() {
+        m_Clients={};
+        Running={};
         ListenerThread = nullptr;
         Running.store(false);
         ServerFD = -1;
@@ -167,7 +167,7 @@ namespace classes::server_side {
         {
             //Critical Section
             lock_guard<mutex> guard(m_EnqueuedActions);
-            EnqueuedActions.push(tuple(client, act));
+            EnqueuedActions.push(tuple<RegisteredClient*,ServerAction>(client, act));
         }
     }
 
@@ -244,7 +244,7 @@ namespace classes::server_side {
                         {
                             lock_guard<mutex> guard(m_Clients);
                             for (auto &curMem: room->Members) {
-                                StreamableString msgSS;
+                                StreamableString msgSS{};
                                 msgSS << id << " " << msg;
                                 curMem->PushResponse(ClientAction(ClientActionType::MessageReceived,
                                                                  curMem->Connection->Address,

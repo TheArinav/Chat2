@@ -53,10 +53,10 @@ RM = /usr/local/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /tmp/tmp.0iHHDiwury
+CMAKE_SOURCE_DIR = /tmp/tmp.QHH1ldnHRF
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /tmp/tmp.0iHHDiwury/cmake-build-debug
+CMAKE_BINARY_DIR = /tmp/tmp.QHH1ldnHRF/cmake-build-debug
 
 # Include any dependencies generated for this target.
 include CMakeFiles/Chat2.dir/depend.make
@@ -72,142 +72,142 @@ include CMakeFiles/Chat2.dir/flags.make
 CMakeFiles/Chat2.dir/main.cpp.o: CMakeFiles/Chat2.dir/flags.make
 CMakeFiles/Chat2.dir/main.cpp.o: ../main.cpp
 CMakeFiles/Chat2.dir/main.cpp.o: CMakeFiles/Chat2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.0iHHDiwury/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Chat2.dir/main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/main.cpp.o -MF CMakeFiles/Chat2.dir/main.cpp.o.d -o CMakeFiles/Chat2.dir/main.cpp.o -c /tmp/tmp.0iHHDiwury/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.QHH1ldnHRF/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Chat2.dir/main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/main.cpp.o -MF CMakeFiles/Chat2.dir/main.cpp.o.d -o CMakeFiles/Chat2.dir/main.cpp.o -c /tmp/tmp.QHH1ldnHRF/main.cpp
 
 CMakeFiles/Chat2.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Chat2.dir/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.0iHHDiwury/main.cpp > CMakeFiles/Chat2.dir/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.QHH1ldnHRF/main.cpp > CMakeFiles/Chat2.dir/main.cpp.i
 
 CMakeFiles/Chat2.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Chat2.dir/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.0iHHDiwury/main.cpp -o CMakeFiles/Chat2.dir/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.QHH1ldnHRF/main.cpp -o CMakeFiles/Chat2.dir/main.cpp.s
 
 CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.o: CMakeFiles/Chat2.dir/flags.make
 CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.o: ../src/classes/general/ServerAction.cpp
 CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.o: CMakeFiles/Chat2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.0iHHDiwury/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.o -MF CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.o.d -o CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.o -c /tmp/tmp.0iHHDiwury/src/classes/general/ServerAction.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.QHH1ldnHRF/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.o -MF CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.o.d -o CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.o -c /tmp/tmp.QHH1ldnHRF/src/classes/general/ServerAction.cpp
 
 CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.0iHHDiwury/src/classes/general/ServerAction.cpp > CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.QHH1ldnHRF/src/classes/general/ServerAction.cpp > CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.i
 
 CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.0iHHDiwury/src/classes/general/ServerAction.cpp -o CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.QHH1ldnHRF/src/classes/general/ServerAction.cpp -o CMakeFiles/Chat2.dir/src/classes/general/ServerAction.cpp.s
 
 CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.o: CMakeFiles/Chat2.dir/flags.make
 CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.o: ../src/classes/general/ClientAction.cpp
 CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.o: CMakeFiles/Chat2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.0iHHDiwury/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.o -MF CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.o.d -o CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.o -c /tmp/tmp.0iHHDiwury/src/classes/general/ClientAction.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.QHH1ldnHRF/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.o -MF CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.o.d -o CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.o -c /tmp/tmp.QHH1ldnHRF/src/classes/general/ClientAction.cpp
 
 CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.0iHHDiwury/src/classes/general/ClientAction.cpp > CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.QHH1ldnHRF/src/classes/general/ClientAction.cpp > CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.i
 
 CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.0iHHDiwury/src/classes/general/ClientAction.cpp -o CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.QHH1ldnHRF/src/classes/general/ClientAction.cpp -o CMakeFiles/Chat2.dir/src/classes/general/ClientAction.cpp.s
 
 CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.o: CMakeFiles/Chat2.dir/flags.make
 CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.o: ../src/classes/server_side/RegisteredClient.cpp
 CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.o: CMakeFiles/Chat2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.0iHHDiwury/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.o -MF CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.o.d -o CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.o -c /tmp/tmp.0iHHDiwury/src/classes/server_side/RegisteredClient.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.QHH1ldnHRF/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.o -MF CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.o.d -o CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.o -c /tmp/tmp.QHH1ldnHRF/src/classes/server_side/RegisteredClient.cpp
 
 CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.0iHHDiwury/src/classes/server_side/RegisteredClient.cpp > CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.QHH1ldnHRF/src/classes/server_side/RegisteredClient.cpp > CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.i
 
 CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.0iHHDiwury/src/classes/server_side/RegisteredClient.cpp -o CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.QHH1ldnHRF/src/classes/server_side/RegisteredClient.cpp -o CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.s
 
 CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.o: CMakeFiles/Chat2.dir/flags.make
 CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.o: ../src/classes/server_side/ClientConnection.cpp
 CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.o: CMakeFiles/Chat2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.0iHHDiwury/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.o -MF CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.o.d -o CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.o -c /tmp/tmp.0iHHDiwury/src/classes/server_side/ClientConnection.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.QHH1ldnHRF/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.o -MF CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.o.d -o CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.o -c /tmp/tmp.QHH1ldnHRF/src/classes/server_side/ClientConnection.cpp
 
 CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.0iHHDiwury/src/classes/server_side/ClientConnection.cpp > CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.QHH1ldnHRF/src/classes/server_side/ClientConnection.cpp > CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.i
 
 CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.0iHHDiwury/src/classes/server_side/ClientConnection.cpp -o CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.QHH1ldnHRF/src/classes/server_side/ClientConnection.cpp -o CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.s
 
 CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.o: CMakeFiles/Chat2.dir/flags.make
 CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.o: ../src/classes/server_side/ChatroomHost.cpp
 CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.o: CMakeFiles/Chat2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.0iHHDiwury/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.o -MF CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.o.d -o CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.o -c /tmp/tmp.0iHHDiwury/src/classes/server_side/ChatroomHost.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.QHH1ldnHRF/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.o -MF CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.o.d -o CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.o -c /tmp/tmp.QHH1ldnHRF/src/classes/server_side/ChatroomHost.cpp
 
 CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.0iHHDiwury/src/classes/server_side/ChatroomHost.cpp > CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.QHH1ldnHRF/src/classes/server_side/ChatroomHost.cpp > CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.i
 
 CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.0iHHDiwury/src/classes/server_side/ChatroomHost.cpp -o CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.QHH1ldnHRF/src/classes/server_side/ChatroomHost.cpp -o CMakeFiles/Chat2.dir/src/classes/server_side/ChatroomHost.cpp.s
 
 CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.o: CMakeFiles/Chat2.dir/flags.make
 CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.o: ../src/classes/server_side/Server.cpp
 CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.o: CMakeFiles/Chat2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.0iHHDiwury/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.o -MF CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.o.d -o CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.o -c /tmp/tmp.0iHHDiwury/src/classes/server_side/Server.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.QHH1ldnHRF/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.o -MF CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.o.d -o CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.o -c /tmp/tmp.QHH1ldnHRF/src/classes/server_side/Server.cpp
 
 CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.0iHHDiwury/src/classes/server_side/Server.cpp > CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.QHH1ldnHRF/src/classes/server_side/Server.cpp > CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.i
 
 CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.0iHHDiwury/src/classes/server_side/Server.cpp -o CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.QHH1ldnHRF/src/classes/server_side/Server.cpp -o CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.s
 
 CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.o: CMakeFiles/Chat2.dir/flags.make
 CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.o: ../src/classes/client_side/Account.cpp
 CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.o: CMakeFiles/Chat2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.0iHHDiwury/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.o -MF CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.o.d -o CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.o -c /tmp/tmp.0iHHDiwury/src/classes/client_side/Account.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.QHH1ldnHRF/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.o -MF CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.o.d -o CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.o -c /tmp/tmp.QHH1ldnHRF/src/classes/client_side/Account.cpp
 
 CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.0iHHDiwury/src/classes/client_side/Account.cpp > CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.QHH1ldnHRF/src/classes/client_side/Account.cpp > CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.i
 
 CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.0iHHDiwury/src/classes/client_side/Account.cpp -o CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.QHH1ldnHRF/src/classes/client_side/Account.cpp -o CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.s
 
 CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.o: CMakeFiles/Chat2.dir/flags.make
 CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.o: ../src/classes/client_side/ServerConnection.cpp
 CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.o: CMakeFiles/Chat2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.0iHHDiwury/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.o -MF CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.o.d -o CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.o -c /tmp/tmp.0iHHDiwury/src/classes/client_side/ServerConnection.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.QHH1ldnHRF/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.o -MF CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.o.d -o CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.o -c /tmp/tmp.QHH1ldnHRF/src/classes/client_side/ServerConnection.cpp
 
 CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.0iHHDiwury/src/classes/client_side/ServerConnection.cpp > CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.QHH1ldnHRF/src/classes/client_side/ServerConnection.cpp > CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.i
 
 CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.0iHHDiwury/src/classes/client_side/ServerConnection.cpp -o CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.QHH1ldnHRF/src/classes/client_side/ServerConnection.cpp -o CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.s
 
 CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.o: CMakeFiles/Chat2.dir/flags.make
 CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.o: ../src/testing/TestScript1.cpp
 CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.o: CMakeFiles/Chat2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.0iHHDiwury/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.o -MF CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.o.d -o CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.o -c /tmp/tmp.0iHHDiwury/src/testing/TestScript1.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/tmp/tmp.QHH1ldnHRF/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.o -MF CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.o.d -o CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.o -c /tmp/tmp.QHH1ldnHRF/src/testing/TestScript1.cpp
 
 CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.0iHHDiwury/src/testing/TestScript1.cpp > CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /tmp/tmp.QHH1ldnHRF/src/testing/TestScript1.cpp > CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.i
 
 CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.0iHHDiwury/src/testing/TestScript1.cpp -o CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /tmp/tmp.QHH1ldnHRF/src/testing/TestScript1.cpp -o CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.s
 
 # Object files for target Chat2
 Chat2_OBJECTS = \
@@ -237,7 +237,7 @@ Chat2: CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.o
 Chat2: CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.o
 Chat2: CMakeFiles/Chat2.dir/build.make
 Chat2: CMakeFiles/Chat2.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/tmp/tmp.0iHHDiwury/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX executable Chat2"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/tmp/tmp.QHH1ldnHRF/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX executable Chat2"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Chat2.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -249,6 +249,6 @@ CMakeFiles/Chat2.dir/clean:
 .PHONY : CMakeFiles/Chat2.dir/clean
 
 CMakeFiles/Chat2.dir/depend:
-	cd /tmp/tmp.0iHHDiwury/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /tmp/tmp.0iHHDiwury /tmp/tmp.0iHHDiwury /tmp/tmp.0iHHDiwury/cmake-build-debug /tmp/tmp.0iHHDiwury/cmake-build-debug /tmp/tmp.0iHHDiwury/cmake-build-debug/CMakeFiles/Chat2.dir/DependInfo.cmake --color=$(COLOR)
+	cd /tmp/tmp.QHH1ldnHRF/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /tmp/tmp.QHH1ldnHRF /tmp/tmp.QHH1ldnHRF /tmp/tmp.QHH1ldnHRF/cmake-build-debug /tmp/tmp.QHH1ldnHRF/cmake-build-debug /tmp/tmp.QHH1ldnHRF/cmake-build-debug/CMakeFiles/Chat2.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/Chat2.dir/depend
 

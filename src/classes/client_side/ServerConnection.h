@@ -32,7 +32,7 @@ namespace classes::client_side {
         queue<ClientAction> IngoingResponses;
         Account TargetClient;
 
-        ServerConnection(const string& Address);
+        ServerConnection(string&& Address);
         ~ServerConnection();
 
 
@@ -41,6 +41,7 @@ namespace classes::client_side {
         mutex m_OutgoingRequests;
         mutex m_IngoingResponses;
         unique_ptr<atomic<bool>> PoppedEmpty;
+        bool Initilized;
         bool Setup(const string& Address);
 
         void PushReq(const ServerAction& req);

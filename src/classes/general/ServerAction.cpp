@@ -5,6 +5,8 @@
 #include "ServerAction.h"
 #include "StreamableString.h"
 
+#include <string>
+
 using namespace std;
 
 namespace classes::general {
@@ -19,8 +21,6 @@ namespace classes::general {
         ss << static_cast<int>(this->ActionType) << " "
         << Address.ai_socktype << " "
         << Address.ai_family << " "
-        << Address.ai_addr->sa_data << " "
-        << Address.ai_addr->sa_family << " "
         << Address.ai_addrlen << " "
         << Address.ai_canonname << " "
         << Address.ai_flags << " "
@@ -38,8 +38,6 @@ namespace classes::general {
         ss >> action.Address.ai_socktype;
         ss >> action.Address.ai_family;
         action.Address.ai_addr = new sockaddr;
-        ss >> action.Address.ai_addr->sa_data;
-        ss >> action.Address.ai_addr->sa_family;
         ss >> action.Address.ai_addrlen;
         ss >> action.Address.ai_canonname;
         ss >> action.Address.ai_flags;

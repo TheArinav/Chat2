@@ -8,12 +8,16 @@
 namespace classes::client_side {
     const char *port = "3490";
 
-    ServerConnection::ServerConnection(const string &Address) {
+    ServerConnection::ServerConnection(string &&Address) {
         ServerFD = -1;
+        Initilized= true;
+        SenderRunning= make_unique<atomic<bool>>();
         SenderRunning->store(false);
         SenderRunning->store(true);
-        if (!Setup(Address))
+        if (!Setup(Address)) {
             std::cerr << "Failed to establish connection to the server!\n";
+            Initilized= false;
+        }
     }
 
     ServerConnection::~ServerConnection() {
@@ -45,6 +49,7 @@ namespace classes::client_side {
                 continue;
             if (connect(ServerFD, p->ai_addr, p->ai_addrlen) == -1) {
                 close(ServerFD);
+                cerr << strerror(errno) << "\n";
                 continue;
             }
             break;
@@ -57,6 +62,8 @@ namespace classes::client_side {
     }
 
     bool ServerConnection::Connect(bool Register, unsigned long long int id, const string& key,const string &DisplayName) {
+        if (!Initilized)
+            return false;
         if (Register) {
             if (DisplayName.empty())
                 return false;

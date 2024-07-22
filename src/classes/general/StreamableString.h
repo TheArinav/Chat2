@@ -10,7 +10,7 @@
 
 using namespace std;
 
-namespace classes::general{
+namespace classes::general {
     class StreamableString {
     public:
         // Constructors
@@ -28,10 +28,12 @@ namespace classes::general{
         ~StreamableString() = default;
 
         // Assignment operators
-        StreamableString& operator=(const std::string& str) {
-            data = str;
-            ss.str(data);
-            ss.clear();  // Clear stream state flags
+        StreamableString& operator=(std::string& str) {
+            if (&this->data != &str) {
+                data = move(str);
+                ss.str(data);
+                ss.clear();  // Clear stream state flags
+            }
             return *this;
         }
 

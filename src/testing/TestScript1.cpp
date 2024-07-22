@@ -1,5 +1,6 @@
 #include <thread>
 #include <iostream>
+#include <atomic>
 
 #include "TestScript1.h"
 
@@ -12,18 +13,33 @@ using namespace classes::client_side;
 
 namespace testing::Test1 {
     void StartTest() {
-        auto *serverT = new thread([=]() -> void {
-            sleep(1);
+        atomic<bool> ServerBuilt ={}, ExitFlag1= {};
+        ExitFlag1.store(false);
+        ServerBuilt.store(false);
+        auto *serverT = new thread([&ServerBuilt,&ExitFlag1]() -> void {
             auto serv = Server("TestServ");
             serv.Start();
+            ServerBuilt.store(true);
+            while(!ExitFlag1.load());
         });
-        auto *clientT = new thread([=]() -> void {
-            sleep(5);
-            auto client = ServerConnection("127.0.0.1");
-            client.Connect(true, -1, "myKey123", "TestClient");
+        auto *clientT = new thread([&ServerBuilt,&ExitFlag1]() -> void {
+            while(!ServerBuilt.load());
+            auto client = ServerConnection((string&&)"127.0.0.1");
+            if(!client.Connect(true, -1, (string&&)"myKey123", (string&&)"TestClient"))
+               exit(EXIT_FAILURE);
+
+            cout << "Client code reached the end of execution. Closing";
+            sleep(1);
+            cout<<".";
+            sleep(1);
+            cout<<".";
+            sleep(1);
+            cout<<".\n";
+
+            ExitFlag1.store(true);
         });
         serverT->detach();
-        //clientT->detach();
+        clientT->detach();
         while (1);
     }
 }
