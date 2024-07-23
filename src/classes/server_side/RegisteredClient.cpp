@@ -30,7 +30,6 @@ namespace classes::server_side {
     ClientAction RegisteredClient::GetResponse() {
         {
             //Critical Section
-            lock_guard<mutex> guard(*m_AwaitingResponses);
             if (!AwaitingResponses.empty()) {
                 PoppedEmptyFlag = false;
                 auto tmp = AwaitingResponses.front();

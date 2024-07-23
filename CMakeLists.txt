@@ -25,11 +25,15 @@ add_executable(
         src/classes/client_side/ServerConnection.cpp
         src/classes/client_side/ServerConnection.h
         src/testing/TestScript1.cpp
-        src/testing/TestScript1.h)
+        src/testing/TestScript1.h
+)
 
+#region Dependencies
 find_package(Threads REQUIRED)
 target_link_libraries(Chat2 PRIVATE Threads::Threads pthread)
 
 # Optional: Set compiler and linker flags explicitly
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread")
+
+#endregion

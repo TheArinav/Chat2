@@ -66,30 +66,40 @@ namespace classes::server_side {
                 auto tmpClient = RegisteredClient((string)"Guest");
                 tmpClient.Connection = move(conn);
 
-                tmpClient.Connection->Start([&tmpClient, this](int fd) {
+
+                int passFD =tmpClient.Connection->FileDescriptor;
+                mutex m_tmpClient={};
+                tmpClient.Connection->Start([&m_tmpClient,&tmpClient, this,passFD](int fd) {
                     char buffer[1024] = {0};
-                    ssize_t valread = recv(tmpClient.Connection->FileDescriptor, (char*)&buffer, sizeof (buffer), 0);
+                    ssize_t valread = recv(passFD, (char*)&buffer, sizeof (buffer), 0);
                     if (valread < 0) {
-                        close(tmpClient.Connection->FileDescriptor);
+                        close(passFD);
                         return;
                     }
                     string data(buffer, valread);
                     auto action = ServerAction::Deserialize(data);
-                    PushAction(&tmpClient, action);
+                    {
+                        lock_guard<mutex> guard(m_tmpClient);
+                        PushAction(&tmpClient, action);
+                    }
+                        auto resp = tmpClient.GetResponse();
+                    {
+                        lock_guard<mutex> guard(m_tmpClient);
+                        if (!tmpClient.PoppedEmptyFlag) {
+                            string sendData = resp.Serialize();
+                            send(passFD, sendData.c_str(), sendData.size(), 0);
+                        }
+                        if (resp.IsLast) {
+                            tmpClient.Connection->Stop();
+                            tmpClient.Connection = {};
+                        }
+                    }
 
-                    auto resp = tmpClient.GetResponse();
-                    if (!tmpClient.PoppedEmptyFlag) {
-                        string sendData = resp.Serialize();
-                        send(tmpClient.Connection->FileDescriptor, sendData.c_str(), sendData.size(), 0);
-                    }
-                    if (resp.IsLast) {
-                        tmpClient.Connection->Stop();
-                        tmpClient.Connection = {};
-                    }
                 });
                 {
-                    lock_guard<mutex> guard(m_Clients);
-                    Clients.push_back(move(tmpClient));
+                    lock_guard<mutex> guard1(m_Clients);
+                    lock_guard<mutex> guard2(m_tmpClient);
+                    Clients.push_back(RegisteredClient(tmpClient));
                 }
             }
             close(ServerFD); // Close the server file descriptor on exit
@@ -104,7 +114,6 @@ namespace classes::server_side {
     }
 
     void Server::Setup() {
-        m_Clients={};
         Running={};
         ListenerThread = nullptr;
         Running.store(false);

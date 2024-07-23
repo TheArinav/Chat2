@@ -86,7 +86,7 @@ namespace classes::server_side {
         }
     }
 
-    void ClientConnection::Start(function<void(int)> listener) {
+    void ClientConnection::Start(const function<void(int)>& listener) {
         if (!listener || ThreadInitialized) {
             return;
         }

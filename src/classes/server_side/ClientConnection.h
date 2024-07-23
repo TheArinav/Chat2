@@ -29,7 +29,7 @@ namespace classes::server_side {
         ClientConnection &operator=(ClientConnection &&other) noexcept;
         ~ClientConnection();
 
-        void Start(function<void(int)> listener);
+        void Start(const function<void(int)>& listener);
         void Stop();
 
     private:

@@ -41,7 +41,7 @@ namespace classes::server_side {
 
 
         ~Server();
-        Server(string&& name);
+        explicit Server(string&& name);
 
         void Start();
         void Stop();
