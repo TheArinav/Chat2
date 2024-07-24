@@ -1,31 +1,33 @@
-#ifndef CHAT2_SERVERACTION_H
-#define CHAT2_SERVERACTION_H
+#ifndef SERVERACTION_H
+#define SERVERACTION_H
 
+#include <string>
+#include <memory>
 #include <sys/socket.h>
 #include <netdb.h>
-#include <string>
-
 #include "Enums.h"
 
-typedef addrinfo AddressInfo;
-
-using std::string;
-
 namespace classes::general {
-
     class ServerAction {
     public:
-        ServerActionType ActionType;
-        AddressInfo Address;
-        string Data;
-
         ServerAction();
-        ServerAction(ServerActionType actType,AddressInfo addr, string data);
+        ServerAction(ServerActionType actType, addrinfo addr, std::string data);
+        ~ServerAction();
+        ServerAction(const ServerAction&) = delete;
+        ServerAction& operator=(const ServerAction&) = delete;
+        ServerAction(ServerAction&&) noexcept;
+        ServerAction& operator=(ServerAction&&) noexcept;
 
-        string Serialize();
-        static ServerAction Deserialize(string &);
+        std::string Serialize();
+        static ServerAction Deserialize(std::string& serializedStr);
+
+        ServerActionType ActionType;
+        addrinfo Address;
+        std::string Data;
+    private:
+        std::unique_ptr<sockaddr> ai_addr_ptr;
+        std::string ai_canonname_str;
     };
-
 }
 
-#endif //CHAT2_SERVERACTION_H
+#endif // SERVERACTION_H

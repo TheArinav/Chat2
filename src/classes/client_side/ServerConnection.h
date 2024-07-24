@@ -35,12 +35,12 @@ namespace classes::client_side {
         ServerConnection(string&& Address);
         ~ServerConnection();
 
-
         bool Connect(bool Register, unsigned long long int id=-1, const string& key="", const string &DisplayName="");
+
     private:
         mutex m_OutgoingRequests;
         mutex m_IngoingResponses;
-        unique_ptr<atomic<bool>> PoppedEmpty;
+        unique_ptr<atomic<bool>> PoppedEmpty;  // Initialize this properly
         bool Initilized;
         bool Setup(const string& Address);
 

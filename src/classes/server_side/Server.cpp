@@ -3,9 +3,12 @@
 #include <utility>
 #include <iostream>
 #include <arpa/inet.h>
+#include <sstream>
+#include <fcntl.h>
+#include <sys/select.h>
 
+#include "ClientConnection.h"
 #include "RegisteredClient.h"
-#include "../general/StreamableString.h"
 
 typedef sockaddr_storage SocketAddressStorage;
 typedef sockaddr SocketAddress;
@@ -24,35 +27,60 @@ namespace classes::server_side {
     Server::~Server() {
         if (ServerFD > 0)
             shutdown(ServerFD, SHUT_RDWR);
-        Running.store(false);
+        Running->store(false);
         if (ListenerThread->joinable())
             ListenerThread->join();
-        delete ListenerThread;
         if (EnactRespondThread->joinable())
             EnactRespondThread->join();
+
+        delete ListenerThread;
         delete EnactRespondThread;
+
+        int i = 1;
+        cout << "\n\nExecution ended. Printing server log:" << "\n";
+        while (!ServerLog.empty()) {
+            cout << "\tServer Log[" << i++ << "]= " << ServerLog[0] << "\n";
+            ServerLog.erase(ServerLog.begin());
+        }
     }
 
-    Server::Server(string&& name) :
+    Server::Server(string &&name) :
             ServerName(move(name)) {
         Setup();
     }
 
+    int make_socket_non_blocking(int sfd) {
+        int flags = fcntl(sfd, F_GETFL, 0);
+        if (flags == -1) {
+            perror("fcntl");
+            return -1;
+        }
+
+        flags |= O_NONBLOCK;
+        if (fcntl(sfd, F_SETFL, flags) == -1) {
+            perror("fcntl");
+            return -1;
+        }
+
+        return 0;
+    }
+
     void Server::Start() {
-        Running.store(true);
+        Running->store(true);
         ListenerThread = new thread([this]() {
-            std::string err="";
+            std::string err = "";
             if (listen(ServerFD, 10) == -1) {
                 cerr << "Listen() failure, cause:\n\t" << strerror(errno) << "\n";
                 return;
             }
 
-            while (Running.load()) {
+            while (Running->load()) {
                 SocketAddressStorage addr{};
                 socklen_t sinSize = sizeof addr;
                 int newFD = accept(ServerFD, (SocketAddress *) &addr, &sinSize);
                 if (newFD == -1) {
-                    if (!Running.load()) break;
+                    if (Running == nullptr || !Running->load())
+                        break;
                     continue;
                 }
 
@@ -63,44 +91,77 @@ namespace classes::server_side {
                 unique_ptr<ClientConnection> conn = make_unique<ClientConnection>();
                 conn->FileDescriptor = newFD;
                 memcpy(&conn->Address, &addr, sizeof(conn->Address));
-                auto tmpClient = RegisteredClient((string)"Guest");
-                tmpClient.Connection = move(conn);
+                auto tmpClient = std::make_shared<RegisteredClient>((string) "Guest");
+                tmpClient->LinkClientConnection(move(conn));
 
-
-                int passFD =tmpClient.Connection->FileDescriptor;
-                mutex m_tmpClient={};
-                tmpClient.Connection->Start([&m_tmpClient,&tmpClient, this,passFD](int fd) {
-                    char buffer[1024] = {0};
-                    ssize_t valread = recv(passFD, (char*)&buffer, sizeof (buffer), 0);
-                    if (valread < 0) {
-                        close(passFD);
+                auto f = [this](const shared_ptr<RegisteredClient> &client, int fd) -> void {
+                    if (make_socket_non_blocking(fd) == -1) {
+                        close(fd);
                         return;
                     }
-                    string data(buffer, valread);
-                    auto action = ServerAction::Deserialize(data);
+
+                    char buffer[1024] = {0};
+
+
+                    fd_set read_fds;
+                    FD_ZERO(&read_fds);
+                    FD_SET(fd, &read_fds);
+
+                    struct timeval timeout{};
+                    timeout.tv_sec = 5;  // Set timeout to 5 seconds
+                    timeout.tv_usec = 0;
+
+                    auto resp = client->GetResponse();
                     {
-                        lock_guard<mutex> guard(m_tmpClient);
-                        PushAction(&tmpClient, action);
-                    }
-                        auto resp = tmpClient.GetResponse();
-                    {
-                        lock_guard<mutex> guard(m_tmpClient);
-                        if (!tmpClient.PoppedEmptyFlag) {
+                        lock_guard<mutex> guard(*client->m_AwaitingResponses);
+                        if (!client->PoppedEmptyFlag) {
                             string sendData = resp.Serialize();
-                            send(passFD, sendData.c_str(), sendData.size(), 0);
+                            send(fd, sendData.c_str(), sendData.size(), 0);
+                            return;
                         }
                         if (resp.IsLast) {
-                            tmpClient.Connection->Stop();
-                            tmpClient.Connection = {};
+                            client->Connection->Stop();
+                            client->Connection = nullptr;
                         }
                     }
 
-                });
+                    int activity = select(fd + 1, &read_fds, nullptr, nullptr, &timeout);
+                    if (activity < 0) {
+                        perror("select");
+                        close(fd);
+                        return;
+                    } else if (activity == 0) {
+                        // Timeout: No data to read, continue to the next iteration
+                        return;
+                    }
+
+                    if (FD_ISSET(fd, &read_fds)) {
+                        ssize_t valread = recv(fd, (char *) &buffer, sizeof(buffer), 0);
+                        if (valread < 0) {
+                            perror("recv");
+                            close(fd);
+                            return;
+                        } else if (valread == 0) {
+                            // Connection closed
+                            close(fd);
+                            return;
+                        }
+
+                        string data(buffer, valread);
+                        auto action = make_shared<ServerAction>(ServerAction::Deserialize(data));
+                        {
+                            lock_guard<mutex> guard(*client->m_AwaitingResponses);
+                            PushAction(client, action);
+                        }
+
+                    }
+                };
+                tmpClient->Connection->Start(f);
                 {
-                    lock_guard<mutex> guard1(m_Clients);
-                    lock_guard<mutex> guard2(m_tmpClient);
-                    Clients.push_back(RegisteredClient(tmpClient));
+                    lock_guard<mutex> guard(m_Clients);
+                    Clients.push_back(tmpClient);
                 }
+
             }
             close(ServerFD); // Close the server file descriptor on exit
         });
@@ -109,14 +170,16 @@ namespace classes::server_side {
         EnactRespondThread->detach();
     }
 
+
     void Server::Stop() {
-        Running.store(false);
+        Running->store(false);
     }
 
     void Server::Setup() {
-        Running={};
+        Running = make_shared<atomic<bool>>();
+        EnqueuedActions = {};
         ListenerThread = nullptr;
-        Running.store(false);
+        Running->store(false);
         ServerFD = -1;
         AddressInfo hints{}, *servInf;
 
@@ -171,16 +234,15 @@ namespace classes::server_side {
         //endregion
     }
 
-
-    void Server::PushAction(RegisteredClient *client, ServerAction act) {
+    void Server::PushAction(shared_ptr<RegisteredClient> client, shared_ptr<ServerAction> act) {
         {
             //Critical Section
             lock_guard<mutex> guard(m_EnqueuedActions);
-            EnqueuedActions.push(tuple<RegisteredClient*,ServerAction>(client, act));
+            EnqueuedActions.push(tuple<shared_ptr<RegisteredClient>, shared_ptr<ServerAction>>(client, act));
         }
     }
 
-    tuple<RegisteredClient *, ServerAction > Server::NextAction() {
+    tuple<shared_ptr<RegisteredClient>, shared_ptr<ServerAction>> Server::NextAction() {
         {
             //Critical Section
             lock_guard<mutex> guard(m_EnqueuedActions);
@@ -191,32 +253,28 @@ namespace classes::server_side {
     }
 
     void Server::EnactRespond() {
-        while (Running.load()) {
-            ServerAction currentAct = {};
-            RegisteredClient *currentRequester = nullptr;
+        while (Running->load()) {
+            shared_ptr<ServerAction> currentAct;
+            shared_ptr<RegisteredClient> currentRequester = nullptr;
 
-            {
-                lock_guard<mutex> guard(m_EnqueuedActions);
-                if (EnqueuedActions.empty()) {
-                    continue; // Skips to the next iteration of the while loop if the queue is empty
-                } else {
-                    auto [r,a] = NextAction();
-                    currentRequester = r;
-                    currentAct = a;
-                    EnqueuedActions.pop(); // Remove the processed action from the queue
-                }
+            if (EnqueuedActions.empty()) {
+                continue; // Skips to the next iteration of the while loop if the queue is empty
+            } else {
+                auto [r, a] = NextAction();
+                currentRequester = r;
+                currentAct = a;
             }
 
             if (currentRequester == nullptr) {
                 continue;
             }
 
-            StreamableString logSS;
-            stringstream ss(currentAct.Data);
+            stringstream logSS{};
+            stringstream ss(currentAct->Data);
             unsigned long long id;
             string key;
 
-            switch (currentAct.ActionType) {
+            switch (currentAct->ActionType) {
                 case ServerActionType::SendMessage: {
                     unsigned long long rID;
                     string msg;
@@ -253,11 +311,11 @@ namespace classes::server_side {
                         {
                             lock_guard<mutex> guard(m_Clients);
                             for (auto &curMem: room->Members) {
-                                StreamableString msgSS{};
+                                stringstream msgSS{};
                                 msgSS << id << " " << msg;
                                 curMem->PushResponse(ClientAction(ClientActionType::MessageReceived,
-                                                                 curMem->Connection->Address,
-                                                                 msgSS));
+                                                                  curMem->Connection->Address,
+                                                                  msgSS.str()));
                             }
                         }
                         logSS << "Message sent in room: '"
@@ -269,7 +327,7 @@ namespace classes::server_side {
                               << "' Message sender ID: '"
                               << id
                               << "'";
-                        ServerLog.emplace_back(logSS);
+                        ServerLog.emplace_back(logSS.str());
                         room->PushMessage(id, msg);
                     } else {
                         currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
@@ -281,18 +339,19 @@ namespace classes::server_side {
                 case ServerActionType::RegisterClient: {
                     string dispName;
                     ss >> dispName >> key;
-                    auto newCl = RegisteredClient(dispName);
-                    newCl.LoginKey = key;
+                    auto newCl = make_shared<RegisteredClient>(dispName);
+                    newCl->LoginKey = key;
                     {
                         lock_guard<mutex> guard(m_Clients);
                         Clients.push_back(move(newCl));
+                        newCl = Clients[Clients.size() - 1];
 
-                        logSS << "Created client: '" << newCl.DisplayName << "#" << newCl.ClientID << "'";
-                        ServerLog.emplace_back(logSS);
+                        logSS << "Created client: '" << newCl->DisplayName << "#" << newCl->ClientID << "'";
+                        ServerLog.emplace_back(logSS.str());
                     }
                     currentRequester->PushResponse(ClientAction(ClientActionType::InformActionSuccess,
                                                                 currentRequester->Connection->Address,
-                                                                to_string(newCl.ClientID)));
+                                                                to_string(newCl->ClientID)));
                     break;
                 }
                 case ServerActionType::LoginClient: {
@@ -302,9 +361,9 @@ namespace classes::server_side {
                         lock_guard<mutex> guard(m_Clients);
 
                         for (auto &c: Clients) {
-                            if (c.ClientID == id) {
-                                if (c.LoginKey == key) {
-                                    client = &c;
+                            if (c->ClientID == id) {
+                                if (c->LoginKey == key) {
+                                    client = c.get();
                                     break;
                                 } else {
                                     currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
@@ -328,13 +387,15 @@ namespace classes::server_side {
                                                                         "Nothing to do, you are already logged in"));
                             continue;
                         }
-
-                        client->Connection = move(currentRequester->Connection);
-
+                    }
+                    client->LinkClientConnection(move(currentRequester->Connection));
+                    client->IsConnected = true;
+                    {
+                        lock_guard<mutex> guard(m_Clients);
                         // Remove Guest Client
                         auto it = find_if(Clients.begin(), Clients.end(),
-                                          [currentRequester](const RegisteredClient &c) {
-                                              return &c == currentRequester;
+                                          [currentRequester](shared_ptr<RegisteredClient> &c) {
+                                              return c.get() == currentRequester.get();
                                           });
 
                         if (it != Clients.end()) {
@@ -344,7 +405,7 @@ namespace classes::server_side {
                                                           client->Connection->Address,
                                                           ServerName + " You were logged in successfully"));
                         logSS << "Client: '" << client->DisplayName << "#" << client->ClientID << "' has logged in";
-                        ServerLog.emplace_back(logSS);
+                        ServerLog.emplace_back(logSS.str());
                     }
 
                     break;
@@ -356,9 +417,9 @@ namespace classes::server_side {
                         RegisteredClient *client = nullptr;
 
                         for (auto &c: Clients) {
-                            if (c.ClientID == id) {
-                                if (c.LoginKey == key) {
-                                    client = &c;
+                            if (c->ClientID == id) {
+                                if (c->LoginKey == key) {
+                                    client = c.get();
                                     break;
                                 } else {
                                     currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
@@ -374,7 +435,7 @@ namespace classes::server_side {
                                                           "You were successfully logged out",
                                                           true));
                         logSS << "Client: '" << client->DisplayName << "#" << client->ClientID << "' has logged out";
-                        ServerLog.emplace_back(logSS);
+                        ServerLog.emplace_back(logSS.str());
                     }
                     break;
                 }
@@ -386,8 +447,8 @@ namespace classes::server_side {
                         {
                             lock_guard<mutex> guard(m_Clients);
                             for (auto &curCl: Clients)
-                                if (curCl.ClientID == id)
-                                    admin = &curCl;
+                                if (curCl->ClientID == id)
+                                    admin = curCl.get();
                         }
                         ChatroomHost newCR = ChatroomHost(roomName, admin);
                         Rooms.push_back(newCR);
@@ -402,12 +463,13 @@ namespace classes::server_side {
                                   << "#"
                                   << newCR.RoomID
                                   << "'";
-                            ServerLog.emplace_back(logSS);
+                            ServerLog.emplace_back(logSS.str());
                         }
 
                         currentRequester->PushResponse(ClientAction(ClientActionType::InformActionSuccess,
                                                                     currentRequester->Connection->Address,
-                                                                    to_string(newCR.RoomID) + " Chat room was created"));
+                                                                    to_string(newCR.RoomID) +
+                                                                    " Chat room was created"));
                         currentRequester->PushResponse(ClientAction(ClientActionType::JoinedChatroom,
                                                                     currentRequester->Connection->Address,
                                                                     to_string(newCR.RoomID) + " " + newCR.DisplayName));
@@ -448,8 +510,9 @@ namespace classes::server_side {
                         if (it != Rooms.end()) {
                             for (auto &curMem: room->Members)
                                 curMem->PushResponse(ClientAction(ClientActionType::LeftChatroom,
-                                                                 curMem->Connection->Address,
-                                                                 to_string(room->RoomID) + " This room was deleted by the admin."));
+                                                                  curMem->Connection->Address,
+                                                                  to_string(room->RoomID) +
+                                                                  " This room was deleted by the admin."));
                             Rooms.erase(it);
                         }
                     }
@@ -476,8 +539,8 @@ namespace classes::server_side {
                             }
                         }
                         for (auto &curCl: Clients) {
-                            if (curCl.ClientID == newMemberID) {
-                                newMember = &curCl;
+                            if (curCl->ClientID == newMemberID) {
+                                newMember = curCl.get();
                                 break;
                             }
                         }
@@ -508,12 +571,12 @@ namespace classes::server_side {
                     newMember->PushResponse(ClientAction(ClientActionType::JoinedChatroom,
                                                          newMember->Connection->Address,
                                                          to_string(room->RoomID) + " " + room->DisplayName));
-                    StreamableString joinMSG;
+                    stringstream joinMSG;
                     joinMSG << id << key << rID << "Admin added a member to this room: '"
-                    << newMember->DisplayName << "#" << newMember->ClientID << "'";
-                    PushAction(currentRequester,ServerAction(general::ServerActionType::SendMessage,
-                                            currentRequester->Connection->Address,
-                                                             (string)joinMSG));
+                            << newMember->DisplayName << "#" << newMember->ClientID << "'";
+                    PushAction(currentRequester, make_shared<ServerAction>(general::ServerActionType::SendMessage,
+                                                                           currentRequester->Connection->Address,
+                                                                           joinMSG.str()));
 
                     logSS << "Client: '"
                           << newMember->DisplayName
@@ -524,7 +587,7 @@ namespace classes::server_side {
                           << "#"
                           << room->RoomID
                           << "'";
-                    ServerLog.emplace_back(logSS);
+                    ServerLog.emplace_back(logSS.str());
                     break;
                 }
                 case ServerActionType::RemoveChatroomMember: {
@@ -548,8 +611,8 @@ namespace classes::server_side {
                             }
                         }
                         for (auto &curCl: Clients) {
-                            if (curCl.ClientID == memberID) {
-                                member = &curCl;
+                            if (curCl->ClientID == memberID) {
+                                member = curCl.get();
                                 break;
                             }
                         }
@@ -595,7 +658,7 @@ namespace classes::server_side {
                               << "#"
                               << room->RoomID
                               << "'";
-                        ServerLog.emplace_back(logSS);
+                        ServerLog.emplace_back(logSS.str());
                     } else {
                         currentRequester->PushResponse(ClientAction(ClientActionType::InformActionFailure,
                                                                     currentRequester->Connection->Address,
@@ -611,9 +674,9 @@ namespace classes::server_side {
         {
             lock_guard<mutex> guard(m_Clients);
             for (auto &c: Clients) {
-                if (c.ClientID == id) {
-                    if (c.LoginKey == key) {
-                        return c.IsConnected;
+                if (c->ClientID == id) {
+                    if (c->LoginKey == key) {
+                        return c->IsConnected;
                     } else {
                         return false;
                     }

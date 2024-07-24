@@ -1,60 +1,24 @@
-
 #include "ClientConnection.h"
+#include "RegisteredClient.h"
+#include <memory>
+#include <mutex>
+
+using namespace std;
 
 namespace classes::server_side {
 
     ClientConnection::ClientConnection()
             : ManagerThread(nullptr), FileDescriptor(-1), ThreadInitialized(false),
-              StopFlag(make_unique<atomic<bool>>(false)), ListenerFunction(nullptr) {}
+              StopFlag(make_unique<atomic<bool>>(false)), ListenerFunction(nullptr), m_Host(make_shared<mutex>()) {}
 
     ClientConnection::ClientConnection(AddressInfo addr)
             : Address(addr), ManagerThread(nullptr), FileDescriptor(-1), ThreadInitialized(false),
-              StopFlag(make_unique<atomic<bool>>(false)), ListenerFunction(nullptr) {}
-
-    ClientConnection::ClientConnection(const ClientConnection &other)
-            : Address(other.Address), FileDescriptor(other.FileDescriptor), ThreadInitialized(other.ThreadInitialized),
-              StopFlag(make_unique<atomic<bool>>((bool)other.StopFlag.get())), ListenerFunction(other.ListenerFunction) {
-        if (other.ThreadInitialized) {
-            ManagerThread = new thread([this] {
-                while (!StopFlag->load()) {
-                    ListenerFunction(FileDescriptor);
-                }
-            });
-        } else {
-            ManagerThread = nullptr;
-        }
-    }
-
-    ClientConnection &ClientConnection::operator=(const ClientConnection &other) {
-        if (this == &other) {
-            return *this;
-        }
-
-        Stop();  // Ensure the current instance stops its thread if running.
-
-        Address = other.Address;
-        FileDescriptor = other.FileDescriptor;
-        ThreadInitialized = other.ThreadInitialized;
-        StopFlag = make_unique<atomic<bool>>((bool)other.StopFlag.get());
-        ListenerFunction = other.ListenerFunction;
-
-        if (other.ThreadInitialized) {
-            ManagerThread = new thread([this] {
-                while (!StopFlag->load()) {
-                    ListenerFunction(FileDescriptor);
-                }
-            });
-        } else {
-            ManagerThread = nullptr;
-        }
-
-        return *this;
-    }
+              StopFlag(make_unique<atomic<bool>>(false)), ListenerFunction(nullptr), m_Host(make_shared<mutex>()) {}
 
     ClientConnection::ClientConnection(ClientConnection &&other) noexcept
             : Address(other.Address), ManagerThread(other.ManagerThread), FileDescriptor(other.FileDescriptor),
               ThreadInitialized(other.ThreadInitialized), StopFlag(move(other.StopFlag)),
-              ListenerFunction(other.ListenerFunction) {
+              ListenerFunction(other.ListenerFunction), m_Host(move(other.m_Host)) {
         other.ManagerThread = nullptr;
         other.ThreadInitialized = false;
     }
@@ -72,6 +36,7 @@ namespace classes::server_side {
         StopFlag = move(other.StopFlag);
         ListenerFunction = other.ListenerFunction;
         ManagerThread = other.ManagerThread;
+        m_Host = move(other.m_Host);
 
         other.ManagerThread = nullptr;
         other.ThreadInitialized = false;
@@ -81,22 +46,24 @@ namespace classes::server_side {
 
     ClientConnection::~ClientConnection() {
         Stop();
-        if (ManagerThread) {
-            delete ManagerThread;
-        }
+        delete ManagerThread;
     }
 
-    void ClientConnection::Start(const function<void(int)>& listener) {
-        if (!listener || ThreadInitialized) {
+    void ClientConnection::Start(const function<void(shared_ptr<RegisteredClient> Host, int FD)>& listener) {
+        if (ThreadInitialized || !listener) {
             return;
         }
         ListenerFunction = listener;
         StopFlag = make_unique<atomic<bool>>(false);
         ManagerThread = new thread([this] {
             while (!StopFlag->load()) {
-                ListenerFunction(FileDescriptor);
+                {
+                    lock_guard<mutex> guard(*m_Host);
+                    ListenerFunction(Host, FileDescriptor);
+                }
             }
         });
+        ManagerThread->detach();
         ThreadInitialized = true;
     }
 

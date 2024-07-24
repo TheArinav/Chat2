@@ -11,7 +11,6 @@ add_executable(
         src/classes/general/ServerAction.h
         src/classes/general/ClientAction.cpp
         src/classes/general/ClientAction.h
-        src/classes/general/StreamableString.h
         src/classes/server_side/RegisteredClient.cpp
         src/classes/server_side/RegisteredClient.h
         src/classes/server_side/ClientConnection.cpp
@@ -37,3 +36,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pthread")
 
 #endregion
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -g")
+set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fsanitize=address")
+

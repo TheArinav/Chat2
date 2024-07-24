@@ -1,36 +1,34 @@
-//
-// Created by ariel on 7/17/2024.
-//
+#ifndef CLIENTACTION_H
+#define CLIENTACTION_H
 
-#ifndef CHAT2_CLIENTACTION_H
-#define CHAT2_CLIENTACTION_H
-
+#include <string>
+#include <memory>
 #include <sys/socket.h>
 #include <netdb.h>
-#include <string>
-
 #include "Enums.h"
 
-typedef addrinfo AddressInfo;
-
-using std::string;
-
 namespace classes::general {
-
     class ClientAction {
     public:
-        ClientActionType ActionType;
-        AddressInfo Address;
-        string Data;
-        bool IsLast;
-
         ClientAction();
-        ClientAction(ClientActionType actType, AddressInfo addr, string data, bool=false);
+        ClientAction(ClientActionType actType, addrinfo addr, std::string data,bool IsLast=true);
+        ~ClientAction();
+        ClientAction(const ClientAction&) = delete;
+        ClientAction& operator=(const ClientAction&) = delete;
+        ClientAction(ClientAction&&) noexcept;
+        ClientAction& operator=(ClientAction&&) noexcept;
 
-        string Serialize();
-        static ClientAction Deserialize(const string &);
+        std::string Serialize();
+        static ClientAction Deserialize(std::string& serializedStr);
+
+        ClientActionType ActionType;
+        addrinfo Address;
+        std::string Data;
+        bool IsLast;
+    private:
+        std::unique_ptr<sockaddr> ai_addr_ptr;
+        std::string ai_canonname_str;
     };
+}
 
-} // general
-
-#endif //CHAT2_CLIENTACTION_H
+#endif // CLIENTACTION_H

@@ -1,7 +1,3 @@
-//
-// Created by ariel on 7/17/2024.
-//
-
 #ifndef CHAT2_SERVER_H
 #define CHAT2_SERVER_H
 
@@ -19,6 +15,8 @@
 #include <map>
 #include <tuple>
 
+#include "../general/ServerAction.h"
+#include "../general/ClientAction.h"
 #include "RegisteredClient.h"
 #include "ChatroomHost.h"
 
@@ -32,13 +30,12 @@ namespace classes::server_side {
         string ServerName;
         mutex m_Clients;
         vector<string> ServerLog;
-        vector<RegisteredClient> Clients;
+        vector<shared_ptr<RegisteredClient>> Clients;
         vector<ChatroomHost> Rooms;
         thread *ListenerThread;
         thread *EnactRespondThread;
         unique_ptr<AddressInfo> ServerSocket;
         int ServerFD;
-
 
         ~Server();
         explicit Server(string&& name);
@@ -46,16 +43,16 @@ namespace classes::server_side {
         void Start();
         void Stop();
 
-        void PushAction(RegisteredClient *client,ServerAction act);
+        void PushAction(shared_ptr<RegisteredClient> client,shared_ptr<ServerAction> act);
     private:
-        atomic<bool> Running;
+        shared_ptr<atomic<bool>> Running;
         mutex m_EnqueuedActions;
-        queue<tuple<RegisteredClient*,ServerAction>> EnqueuedActions;
+        queue<tuple<shared_ptr<RegisteredClient>,shared_ptr<ServerAction>>> EnqueuedActions;
         void Setup();
-        tuple<RegisteredClient*,ServerAction> NextAction();
+        tuple<shared_ptr<RegisteredClient>,shared_ptr<ServerAction>> NextAction();
         void EnactRespond();
         bool VerifyIdentity(unsigned long long id, const string& key);
     };
-} // server_side
+} // namespace classes::server_side
 
 #endif //CHAT2_SERVER_H

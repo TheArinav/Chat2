@@ -8,13 +8,14 @@
 
 #include "../general/ClientAction.h"
 #include "../general/ServerAction.h"
-#include "ClientConnection.h"
 
 using namespace std;
 using namespace classes::general;
 
 namespace classes::server_side {
-    class RegisteredClient {
+    class ClientConnection;
+
+    class RegisteredClient : public enable_shared_from_this<RegisteredClient> {
     public:
         unsigned long long ClientID;
         string DisplayName;
@@ -26,22 +27,19 @@ namespace classes::server_side {
         RegisteredClient();
         explicit RegisteredClient(string);
         RegisteredClient(RegisteredClient&);
-        RegisteredClient(RegisteredClient &&other) noexcept;
-        RegisteredClient &operator=(RegisteredClient &&other) noexcept;
+        RegisteredClient(RegisteredClient&&) noexcept;
+        RegisteredClient& operator=(RegisteredClient&&) noexcept;
 
         void PushResponse(ClientAction);
-
+        void LinkClientConnection(unique_ptr<ClientConnection> conn);
         ClientAction GetResponse();
 
-
+        shared_ptr<mutex> m_AwaitingResponses;
     private:
         void Setup();
         static unsigned long long count;
-        unique_ptr<mutex> m_AwaitingResponses;
         vector<ClientAction> AwaitingResponses;
-
     };
-
 }
 
 #endif //CHAT2_REGISTEREDCLIENT_H
