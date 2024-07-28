@@ -1,5 +1,5 @@
 CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.o: \
- /tmp/tmp.AhEH0UNdug/src/testing/TestScript1.cpp \
+ /tmp/tmp.lc8bbDt9II/src/testing/TestScript1.cpp \
  /usr/include/stdc-predef.h /usr/include/c++/9/thread \
  /usr/include/c++/9/chrono /usr/include/c++/9/ratio \
  /usr/include/c++/9/type_traits \
@@ -162,8 +162,8 @@ CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.o: \
  /usr/include/c++/9/bits/basic_ios.tcc \
  /usr/include/c++/9/bits/ostream.tcc /usr/include/c++/9/istream \
  /usr/include/c++/9/bits/istream.tcc /usr/include/c++/9/atomic \
- /tmp/tmp.AhEH0UNdug/src/testing/TestScript1.h \
- /tmp/tmp.AhEH0UNdug/src/testing/../classes/client_side/ServerConnection.h \
+ /tmp/tmp.lc8bbDt9II/src/testing/TestScript1.h \
+ /tmp/tmp.lc8bbDt9II/src/testing/../classes/server_side/Server.h \
  /usr/include/aarch64-linux-gnu/sys/socket.h \
  /usr/include/aarch64-linux-gnu/bits/types/struct_iovec.h \
  /usr/include/aarch64-linux-gnu/bits/socket.h \
@@ -179,45 +179,37 @@ CMakeFiles/Chat2.dir/src/testing/TestScript1.cpp.o: \
  /usr/include/aarch64-linux-gnu/asm/sockios.h \
  /usr/include/asm-generic/sockios.h \
  /usr/include/aarch64-linux-gnu/bits/types/struct_osockaddr.h \
- /usr/include/arpa/inet.h /usr/include/netinet/in.h \
- /usr/include/aarch64-linux-gnu/bits/in.h /usr/include/netdb.h \
- /usr/include/rpc/netdb.h \
+ /usr/include/netdb.h /usr/include/netinet/in.h \
+ /usr/include/aarch64-linux-gnu/bits/in.h /usr/include/rpc/netdb.h \
  /usr/include/aarch64-linux-gnu/bits/types/sigevent_t.h \
  /usr/include/aarch64-linux-gnu/bits/types/__sigval_t.h \
- /usr/include/aarch64-linux-gnu/bits/netdb.h /usr/include/c++/9/queue \
- /usr/include/c++/9/deque /usr/include/c++/9/bits/stl_deque.h \
- /usr/include/c++/9/bits/deque.tcc /usr/include/c++/9/vector \
- /usr/include/c++/9/bits/stl_vector.h \
- /usr/include/c++/9/bits/stl_bvector.h /usr/include/c++/9/bits/vector.tcc \
- /usr/include/c++/9/bits/stl_heap.h /usr/include/c++/9/bits/stl_queue.h \
- /usr/include/c++/9/mutex /usr/include/c++/9/bits/std_mutex.h \
- /usr/include/c++/9/bits/unique_lock.h \
- /tmp/tmp.AhEH0UNdug/src/testing/../classes/client_side/Account.h \
- /usr/include/c++/9/map /usr/include/c++/9/bits/stl_tree.h \
- /usr/include/c++/9/bits/node_handle.h /usr/include/c++/9/optional \
- /usr/include/c++/9/bits/enable_special_members.h \
- /usr/include/c++/9/bits/stl_map.h /usr/include/c++/9/bits/stl_multimap.h \
- /usr/include/c++/9/bits/erase_if.h \
- /tmp/tmp.AhEH0UNdug/src/testing/../classes/client_side/../general/ServerAction.h \
- /tmp/tmp.AhEH0UNdug/src/testing/../classes/client_side/../general/Enums.h \
- /tmp/tmp.AhEH0UNdug/src/testing/../classes/client_side/../general/ClientAction.h \
- /tmp/tmp.AhEH0UNdug/src/testing/../classes/server_side/Server.h \
- /usr/include/c++/9/cstring /usr/include/string.h /usr/include/strings.h \
- /usr/include/unistd.h /usr/include/aarch64-linux-gnu/bits/posix_opt.h \
+ /usr/include/aarch64-linux-gnu/bits/netdb.h /usr/include/c++/9/cstring \
+ /usr/include/string.h /usr/include/strings.h /usr/include/unistd.h \
+ /usr/include/aarch64-linux-gnu/bits/posix_opt.h \
  /usr/include/aarch64-linux-gnu/bits/environments.h \
  /usr/include/aarch64-linux-gnu/bits/confname.h \
  /usr/include/aarch64-linux-gnu/bits/getopt_posix.h \
  /usr/include/aarch64-linux-gnu/bits/getopt_core.h \
  /usr/include/aarch64-linux-gnu/bits/unistd_ext.h \
- /tmp/tmp.AhEH0UNdug/src/testing/../classes/server_side/RegisteredClient.h \
- /tmp/tmp.AhEH0UNdug/src/testing/../classes/server_side/../general/ClientAction.h \
- /tmp/tmp.AhEH0UNdug/src/testing/../classes/server_side/../general/ServerAction.h \
- /tmp/tmp.AhEH0UNdug/src/testing/../classes/server_side/ClientConnection.h \
- /usr/include/c++/9/functional /usr/include/c++/9/bits/std_function.h \
- /usr/include/c++/9/unordered_map /usr/include/c++/9/bits/hashtable.h \
- /usr/include/c++/9/bits/hashtable_policy.h \
- /usr/include/c++/9/bits/unordered_map.h \
- /usr/include/c++/9/bits/stl_algo.h \
- /usr/include/c++/9/bits/algorithmfwd.h \
- /usr/include/c++/9/bits/uniform_int_dist.h \
- /tmp/tmp.AhEH0UNdug/src/testing/../classes/server_side/ChatroomHost.h
+ /usr/include/c++/9/vector /usr/include/c++/9/bits/stl_vector.h \
+ /usr/include/c++/9/bits/stl_bvector.h /usr/include/c++/9/bits/vector.tcc \
+ /usr/include/c++/9/mutex /usr/include/c++/9/bits/std_mutex.h \
+ /usr/include/c++/9/bits/unique_lock.h /usr/include/c++/9/queue \
+ /usr/include/c++/9/deque /usr/include/c++/9/bits/stl_deque.h \
+ /usr/include/c++/9/bits/deque.tcc /usr/include/c++/9/bits/stl_heap.h \
+ /usr/include/c++/9/bits/stl_queue.h /usr/include/c++/9/map \
+ /usr/include/c++/9/bits/stl_tree.h /usr/include/c++/9/bits/node_handle.h \
+ /usr/include/c++/9/optional \
+ /usr/include/c++/9/bits/enable_special_members.h \
+ /usr/include/c++/9/bits/stl_map.h /usr/include/c++/9/bits/stl_multimap.h \
+ /usr/include/c++/9/bits/erase_if.h \
+ /tmp/tmp.lc8bbDt9II/src/testing/../classes/server_side/../general/ServerAction.h \
+ /tmp/tmp.lc8bbDt9II/src/testing/../classes/server_side/../general/Enums.h \
+ /tmp/tmp.lc8bbDt9II/src/testing/../classes/server_side/../general/ClientAction.h \
+ /tmp/tmp.lc8bbDt9II/src/testing/../classes/server_side/RegisteredClient.h \
+ /tmp/tmp.lc8bbDt9II/src/testing/../classes/server_side/ChatroomHost.h \
+ /tmp/tmp.lc8bbDt9II/src/testing/../classes/client_side/ServerConnection.h \
+ /usr/include/arpa/inet.h \
+ /tmp/tmp.lc8bbDt9II/src/testing/../classes/client_side/Account.h \
+ /tmp/tmp.lc8bbDt9II/src/testing/../classes/client_side/../general/ServerAction.h \
+ /tmp/tmp.lc8bbDt9II/src/testing/../classes/client_side/../general/ClientAction.h

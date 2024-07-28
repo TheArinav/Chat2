@@ -1,7 +1,7 @@
 CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.o: \
- /tmp/tmp.AhEH0UNdug/src/classes/server_side/ClientConnection.cpp \
+ /tmp/tmp.lc8bbDt9II/src/classes/server_side/ClientConnection.cpp \
  /usr/include/stdc-predef.h \
- /tmp/tmp.AhEH0UNdug/src/classes/server_side/ClientConnection.h \
+ /tmp/tmp.lc8bbDt9II/src/classes/server_side/ClientConnection.h \
  /usr/include/aarch64-linux-gnu/sys/socket.h /usr/include/features.h \
  /usr/include/aarch64-linux-gnu/sys/cdefs.h \
  /usr/include/aarch64-linux-gnu/bits/wordsize.h \
@@ -166,8 +166,12 @@ CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.o: \
  /usr/include/c++/9/backward/auto_ptr.h \
  /usr/include/c++/9/pstl/glue_memory_defs.h \
  /usr/include/c++/9/pstl/execution_defs.h /usr/include/c++/9/atomic \
- /usr/include/c++/9/functional /usr/include/c++/9/bits/std_function.h \
- /usr/include/c++/9/unordered_map /usr/include/c++/9/bits/hashtable.h \
+ /usr/include/c++/9/mutex /usr/include/c++/9/system_error \
+ /usr/include/aarch64-linux-gnu/c++/9/bits/error_constants.h \
+ /usr/include/c++/9/bits/std_mutex.h \
+ /usr/include/c++/9/bits/unique_lock.h /usr/include/c++/9/functional \
+ /usr/include/c++/9/bits/std_function.h /usr/include/c++/9/unordered_map \
+ /usr/include/c++/9/bits/hashtable.h \
  /usr/include/c++/9/bits/hashtable_policy.h \
  /usr/include/c++/9/bits/node_handle.h /usr/include/c++/9/optional \
  /usr/include/c++/9/bits/enable_special_members.h \
@@ -178,4 +182,8 @@ CMakeFiles/Chat2.dir/src/classes/server_side/ClientConnection.cpp.o: \
  /usr/include/c++/9/bits/stl_algo.h \
  /usr/include/c++/9/bits/algorithmfwd.h \
  /usr/include/c++/9/bits/stl_heap.h \
- /usr/include/c++/9/bits/uniform_int_dist.h
+ /usr/include/c++/9/bits/uniform_int_dist.h \
+ /tmp/tmp.lc8bbDt9II/src/classes/server_side/RegisteredClient.h \
+ /tmp/tmp.lc8bbDt9II/src/classes/server_side/../general/ClientAction.h \
+ /tmp/tmp.lc8bbDt9II/src/classes/server_side/../general/Enums.h \
+ /tmp/tmp.lc8bbDt9II/src/classes/server_side/../general/ServerAction.h

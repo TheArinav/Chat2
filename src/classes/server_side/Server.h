@@ -35,6 +35,8 @@ namespace classes::server_side {
         thread *ListenerThread;
         thread *EnactRespondThread;
         unique_ptr<AddressInfo> ServerSocket;
+        sockaddr_storage AddrStore;
+        string IPSTR;
         int ServerFD;
 
         ~Server();

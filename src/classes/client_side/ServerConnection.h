@@ -24,7 +24,7 @@ namespace classes::client_side {
 
     class ServerConnection {
     public:
-        AddressInfo ServerSocket;
+        shared_ptr<AddressInfo> ServerSocket;
         int ServerFD;
         unique_ptr<atomic<bool>> SenderRunning;
         thread *SenderThread;
@@ -32,23 +32,25 @@ namespace classes::client_side {
         queue<ClientAction> IngoingResponses;
         Account TargetClient;
 
-        ServerConnection(string&& Address);
+        explicit ServerConnection(const string& Address);
         ~ServerConnection();
 
+        Account Register(const string&, const string&);
         bool Connect(bool Register, unsigned long long int id=-1, const string& key="", const string &DisplayName="");
 
+        ClientAction Request(ServerAction action) const;
     private:
+        void PushReq(const ServerAction& req);
+        ClientAction PopResp();
         mutex m_OutgoingRequests;
         mutex m_IngoingResponses;
         unique_ptr<atomic<bool>> PoppedEmpty;  // Initialize this properly
+
         bool Initilized;
         bool Setup(const string& Address);
 
-        void PushReq(const ServerAction& req);
         ServerAction PopReq();
-
         void PushResp(ClientAction resp);
-        ClientAction PopResp();
     };
 
 } // client_side

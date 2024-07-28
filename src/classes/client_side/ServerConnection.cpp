@@ -8,13 +8,15 @@
 namespace classes::client_side {
     const char *port = "3490";
 
-    ServerConnection::ServerConnection(string &&Address) {
+    ServerConnection::ServerConnection(const string &Address) {
         ServerFD = -1;
         Initilized = true;
         SenderRunning = make_unique<atomic<bool>>();
         SenderRunning->store(false);
         SenderRunning->store(true);
-        PoppedEmpty = make_unique<atomic<bool>>();  // Initialize PoppedEmpty
+        OutgoingRequests = {};
+        IngoingResponses = {};
+        PoppedEmpty = make_unique<atomic<bool>>(false);  // Initialize PoppedEmpty
         PoppedEmpty->store(false);  // Set an initial value
         if (!Setup(Address)) {
             std::cerr << "Failed to establish connection to the server!\n";
@@ -29,7 +31,7 @@ namespace classes::client_side {
         delete SenderThread;
         if (ServerFD != -1)
             close(ServerFD);
-        freeaddrinfo(&ServerSocket);
+        freeaddrinfo(&*ServerSocket);
     }
 
     bool ServerConnection::Setup(const string &Address) {
@@ -70,11 +72,10 @@ namespace classes::client_side {
                 return false;
             stringstream ss{};
             ss << DisplayName << " " << key;
-            auto regAct = ServerAction(ServerActionType::RegisterClient, ServerSocket, ss.str());
+            auto regAct = ServerAction(ServerActionType::RegisterClient, {}, ss.str());
             string s_regAct = regAct.Serialize();
             send(ServerFD, s_regAct.c_str(), s_regAct.size(), 0);
 
-            sleep(5);
 
             char buffer[1024];
             ssize_t bytesReceived = recv(ServerFD, buffer, sizeof(buffer) - 1, 0);
@@ -95,12 +96,10 @@ namespace classes::client_side {
         stringstream ss;
         ss << id << " " << key;
         auto logginAct = ServerAction(ServerActionType::LoginClient,
-                                      ServerSocket,
+                                      {},
                                       ss.str());
         string s_logginAct = logginAct.Serialize();
         send(ServerFD, s_logginAct.c_str(), s_logginAct.size(), 0);
-
-        sleep(5);
 
         char buffer[1024];
         ssize_t bytesReceived = recv(ServerFD, buffer, sizeof(buffer) - 1, 0);
@@ -118,35 +117,34 @@ namespace classes::client_side {
         ss >> ServName;
         getline(ss,RespMsg);
         cout << RespMsg << "\n\tServer Name= '" << ServName << "'\n";
-
-        SenderThread = new thread([this]() -> void {
-            while (SenderRunning->load()) {
-                auto curReq = PopReq();
-                if (!PoppedEmpty->load()) {
-                    string s_req = curReq.Serialize();
-                    send(ServerFD, s_req.c_str(), s_req.size(), 0);
-                    sleep(5);
-                }
-                char buffer[1024];
-                ssize_t bytesReceived = recv(ServerFD, &buffer, sizeof buffer, 0);
-                if (bytesReceived < 0) {
-                    cerr << "Received response was nullptr\n";
-                    if (SenderRunning->load())
-                        continue;
-                    break;
-                }
-
-                buffer[bytesReceived] = '\0';
-                auto tmp = string(buffer);
-                auto response = ClientAction::Deserialize(tmp);
-
-                // Temporary:
-                cout << string(buffer) << "\n";
-            }
-        });
-
-        sleep(1);
-        SenderThread->detach();
+//        SenderThread = new thread([this]() -> void {
+//            while (SenderRunning->load()) {
+//                auto curReq = PopReq();
+//                if (!PoppedEmpty->load()) {
+//                    string s_req = curReq.Serialize();
+//                    send(ServerFD, s_req.c_str(), s_req.size(), 0);
+//                    sleep(5);
+//                }
+//                char buffer[1024];
+//                ssize_t bytesReceived = recv(ServerFD, &buffer, sizeof buffer, 0);
+//                if (bytesReceived < 0) {
+//                    cerr << "Received response was nullptr\n";
+//                    if (SenderRunning->load())
+//                        continue;
+//                    break;
+//                }
+//
+//                buffer[bytesReceived] = '\0';
+//                auto tmp = string(buffer);
+//                auto response = ClientAction::Deserialize(tmp);
+//
+//                // Temporary:
+//                cout << string(buffer) << "\n";
+//            }
+//        });
+//
+//        sleep(1);
+//        SenderThread->detach();
         // WIP
         return true;
     }
@@ -161,10 +159,10 @@ namespace classes::client_side {
     ServerAction ServerConnection::PopReq() {
         {
             lock_guard<mutex> guard(m_OutgoingRequests);
-            PoppedEmpty->store(false);
+            PoppedEmpty->store(true);
             if (OutgoingRequests.empty())
                 return {};
-            PoppedEmpty->store(true);
+            PoppedEmpty->store(false);
             auto tmp = move(OutgoingRequests.front());
             OutgoingRequests.pop();
             return tmp;
@@ -181,14 +179,54 @@ namespace classes::client_side {
     ClientAction ServerConnection::PopResp() {
         {
             lock_guard<mutex> guard(m_IngoingResponses);
-            PoppedEmpty->store(false);
+            PoppedEmpty->store(true);
             if (IngoingResponses.empty())
                 return {};
-            PoppedEmpty->store(true);
+            PoppedEmpty->store(false);
             auto tmp = move(IngoingResponses.front());
             IngoingResponses.pop();
             return tmp;
         }
+    }
+
+    Account ServerConnection::Register(const string& key, const string& DisplayName) {
+        if (DisplayName.empty())
+            return {};
+        stringstream ss{};
+        ss << DisplayName << " " << key;
+        auto regAct = ServerAction(ServerActionType::RegisterClient, {}, ss.str());
+        string s_regAct = regAct.Serialize();
+        send(ServerFD, s_regAct.c_str(), s_regAct.size(), 0);
+
+        char buffer[1024];
+        ssize_t bytesReceived = recv(ServerFD, buffer, sizeof(buffer) - 1, 0);
+        if (bytesReceived < 0)
+            return {};
+
+        buffer[bytesReceived] = '\0';
+        string s_resp(buffer);
+
+        auto response = ClientAction::Deserialize(s_resp);
+        ss = stringstream(response.Data);
+        Account res={};
+        ss >> res.ID;
+        res.ConnectionKey = key;
+        return res;
+    }
+
+    ClientAction ServerConnection::Request(ServerAction action) const {
+        auto snd = action.Serialize();
+        send(ServerFD, snd.c_str(),snd.size(), 0);
+        char buffer[1024];
+        ssize_t bytesReceived = recv(ServerFD, buffer, sizeof(buffer) - 1, 0);
+        if (bytesReceived < 0)
+            return {};
+
+        buffer[bytesReceived] = '\0';
+        string s_resp(buffer);
+
+        auto response = ClientAction::Deserialize(s_resp);
+        return response;
     }
 
 } // namespace classes::client_side

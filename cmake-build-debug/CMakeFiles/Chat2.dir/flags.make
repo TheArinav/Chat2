@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = 
 
-CXX_FLAGS =  -pthread -g -std=gnu++17
+CXX_FLAGS =  -pthread -fsanitize=address -g -g -std=gnu++17
 

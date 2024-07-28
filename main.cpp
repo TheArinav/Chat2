@@ -2,17 +2,17 @@
 #include <iostream>
 #include <csignal>
 #include <memory>
-#include "src/testing/TestScript1.h"
+#include "src/Terminal/Terminal.h"
 
 using namespace std;
 using namespace classes::server_side;
-using namespace testing;
+using namespace terminal;
 
 void signalHandler(int signum) {
-    std::cout << "\n\nInterrupt signal (" << signum << ") received.\n";
+    cout << "\n\nInterrupt signal (" << signum << ") received.\n";
 
-    if (Test1::ServerInstance) {
-        Test1::ServerInstance->Stop();
+    if (Terminal::CurrentServer) {
+        Terminal::CurrentServer->Stop();
     }
 
     // Exit the program
@@ -20,10 +20,9 @@ void signalHandler(int signum) {
 }
 
 int main() {
-    cout << "Starting the test (TestScript1.h):\n\n";
+
     signal(SIGINT, signalHandler);
     signal(SIGTERM, signalHandler);
-
-    Test1::StartTest();
+    Terminal::StartTerminal();
     return 0;
 }
