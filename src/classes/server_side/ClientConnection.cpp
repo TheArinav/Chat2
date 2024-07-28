@@ -9,11 +9,11 @@ namespace classes::server_side {
 
     ClientConnection::ClientConnection()
             : ManagerThread(nullptr), FileDescriptor(-1), ThreadInitialized(false),
-              StopFlag(make_unique<atomic<bool>>(false)), ListenerFunction(nullptr), m_Host(make_shared<mutex>()) {}
+              StopFlag(make_shared<atomic<bool>>(false)), ListenerFunction(nullptr), m_Host(make_shared<mutex>()) {}
 
     ClientConnection::ClientConnection(AddressInfo addr)
             : Address(addr), ManagerThread(nullptr), FileDescriptor(-1), ThreadInitialized(false),
-              StopFlag(make_unique<atomic<bool>>(false)), ListenerFunction(nullptr), m_Host(make_shared<mutex>()) {}
+              StopFlag(make_shared<atomic<bool>>(false)), ListenerFunction(nullptr), m_Host(make_shared<mutex>()) {}
 
     ClientConnection::ClientConnection(ClientConnection &&other) noexcept
             : Address(other.Address), ManagerThread(other.ManagerThread), FileDescriptor(other.FileDescriptor),
@@ -49,7 +49,7 @@ namespace classes::server_side {
         delete ManagerThread;
     }
 
-    void ClientConnection::Start(const function<void(shared_ptr<RegisteredClient> Host, int FD)>& listener) {
+    void ClientConnection::Start(const function<void(shared_ptr<RegisteredClient> Host, int FD, shared_ptr<atomic<bool>> stop)>& listener) {
         if (ThreadInitialized || !listener) {
             return;
         }
@@ -59,7 +59,7 @@ namespace classes::server_side {
             while (!StopFlag->load()) {
                 {
                     lock_guard<mutex> guard(*m_Host);
-                    ListenerFunction(Host, FileDescriptor);
+                    ListenerFunction(Host, FileDescriptor, StopFlag);
                 }
             }
         });

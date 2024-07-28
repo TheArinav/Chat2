@@ -32,13 +32,13 @@ namespace classes::server_side {
         ClientConnection &operator=(ClientConnection &&other) noexcept;
         ~ClientConnection();
 
-        void Start(const function<void(shared_ptr<RegisteredClient> Host, int FD)>& listener);
+        void Start(const function<void(shared_ptr<RegisteredClient> Host, int FD, shared_ptr<atomic<bool>> stop)>& listener);
         void Stop();
         shared_ptr<mutex> m_Host;  // Changed to shared_ptr
     private:
-        unique_ptr<atomic<bool>> StopFlag;
+        shared_ptr<atomic<bool>> StopFlag;
 
-        function<void(shared_ptr<RegisteredClient> Host, int FD)> ListenerFunction;
+        function<void(shared_ptr<RegisteredClient> Host, int FD, shared_ptr<atomic<bool>> stop)> ListenerFunction;
     };
 } // server_side
 

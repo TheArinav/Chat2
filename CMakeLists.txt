@@ -23,8 +23,10 @@ add_executable(
         src/classes/client_side/Account.h
         src/classes/client_side/ServerConnection.cpp
         src/classes/client_side/ServerConnection.h
-        src/testing/TestScript1.cpp
-        src/testing/TestScript1.h
+        src/Terminal/InstructionInterpreter.cpp
+        src/Terminal/InstructionInterpreter.h
+        src/Terminal/Terminal.cpp
+        src/Terminal/Terminal.h
 )
 
 #region Dependencies

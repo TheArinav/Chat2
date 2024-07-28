@@ -53,12 +53,14 @@ namespace classes::server_side {
         int flags = fcntl(sfd, F_GETFL, 0);
         if (flags == -1) {
             perror("fcntl");
+            exit(EXIT_FAILURE);
             return -1;
         }
 
         flags |= O_NONBLOCK;
         if (fcntl(sfd, F_SETFL, flags) == -1) {
             perror("fcntl");
+            exit(EXIT_FAILURE);
             return -1;
         }
 
@@ -94,7 +96,7 @@ namespace classes::server_side {
                 auto tmpClient = std::make_shared<RegisteredClient>((string) "Guest");
                 tmpClient->LinkClientConnection(move(conn));
 
-                auto f = [this](const shared_ptr<RegisteredClient> &client, int fd) -> void {
+                auto f = [this](const shared_ptr<RegisteredClient> &client, int fd, shared_ptr<atomic<bool>> stop) -> void {
                     if (make_socket_non_blocking(fd) == -1) {
                         close(fd);
                         return;
@@ -140,10 +142,16 @@ namespace classes::server_side {
                         if (valread < 0) {
                             perror("recv");
                             close(fd);
+
+                            stop->store(true);
+
                             return;
                         } else if (valread == 0) {
                             // Connection closed
                             close(fd);
+
+                            stop->store(true);
+
                             return;
                         }
 
@@ -222,7 +230,9 @@ namespace classes::server_side {
                 continue;
             }
 
-            break; // Successfully bound the socket
+            // Successfully bound the socket
+            memcpy(&AddrStore, p->ai_addr, p->ai_addrlen);
+            break;
         }
 
         if (p == nullptr) {
@@ -232,6 +242,26 @@ namespace classes::server_side {
 
         freeaddrinfo(servInf);
         //endregion
+
+        SocketAddressStorage boundAddr{};
+        socklen_t addrLen = sizeof(boundAddr);
+        if (getsockname(ServerFD, (struct sockaddr*)&boundAddr, &addrLen) == -1) {
+            perror("getsockname");
+            close(ServerFD);
+            throw std::runtime_error("getsockname() failed!");
+        }
+
+        char ipstr[INET6_ADDRSTRLEN];
+        void *addr;
+        if (boundAddr.ss_family == AF_INET) { // IPv4
+            auto *ipv4 = (struct sockaddr_in *)&boundAddr;
+            addr = &(ipv4->sin_addr);
+        } else { // IPv6
+            auto *ipv6 = (struct sockaddr_in6 *)&boundAddr;
+            addr = &(ipv6->sin6_addr);
+        }
+        inet_ntop(boundAddr.ss_family, addr, ipstr, sizeof ipstr);
+        IPSTR=ipstr;
     }
 
     void Server::PushAction(shared_ptr<RegisteredClient> client, shared_ptr<ServerAction> act) {

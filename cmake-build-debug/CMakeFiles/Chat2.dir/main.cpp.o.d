@@ -1,4 +1,4 @@
-CMakeFiles/Chat2.dir/main.cpp.o: /tmp/tmp.AhEH0UNdug/main.cpp \
+CMakeFiles/Chat2.dir/main.cpp.o: /tmp/tmp.lc8bbDt9II/main.cpp \
  /usr/include/stdc-predef.h /usr/include/c++/9/iostream \
  /usr/include/aarch64-linux-gnu/c++/9/bits/c++config.h \
  /usr/include/aarch64-linux-gnu/c++/9/bits/os_defines.h \
@@ -137,5 +137,112 @@ CMakeFiles/Chat2.dir/main.cpp.o: /tmp/tmp.AhEH0UNdug/main.cpp \
  /usr/include/c++/9/bits/locale_facets.tcc \
  /usr/include/c++/9/bits/basic_ios.tcc \
  /usr/include/c++/9/bits/ostream.tcc /usr/include/c++/9/istream \
- /usr/include/c++/9/bits/istream.tcc \
- /tmp/tmp.AhEH0UNdug/src/testing/TestScript1.h
+ /usr/include/c++/9/bits/istream.tcc /usr/include/c++/9/csignal \
+ /usr/include/signal.h /usr/include/aarch64-linux-gnu/bits/signum.h \
+ /usr/include/aarch64-linux-gnu/bits/signum-generic.h \
+ /usr/include/aarch64-linux-gnu/bits/types/sig_atomic_t.h \
+ /usr/include/aarch64-linux-gnu/bits/types/siginfo_t.h \
+ /usr/include/aarch64-linux-gnu/bits/types/__sigval_t.h \
+ /usr/include/aarch64-linux-gnu/bits/siginfo-arch.h \
+ /usr/include/aarch64-linux-gnu/bits/siginfo-consts.h \
+ /usr/include/aarch64-linux-gnu/bits/siginfo-consts-arch.h \
+ /usr/include/aarch64-linux-gnu/bits/types/sigval_t.h \
+ /usr/include/aarch64-linux-gnu/bits/types/sigevent_t.h \
+ /usr/include/aarch64-linux-gnu/bits/sigevent-consts.h \
+ /usr/include/aarch64-linux-gnu/bits/sigaction.h \
+ /usr/include/aarch64-linux-gnu/bits/sigcontext.h \
+ /usr/include/aarch64-linux-gnu/asm/sigcontext.h \
+ /usr/include/linux/types.h /usr/include/aarch64-linux-gnu/asm/types.h \
+ /usr/include/asm-generic/types.h /usr/include/asm-generic/int-ll64.h \
+ /usr/include/aarch64-linux-gnu/asm/bitsperlong.h \
+ /usr/include/asm-generic/bitsperlong.h /usr/include/linux/posix_types.h \
+ /usr/include/linux/stddef.h \
+ /usr/include/aarch64-linux-gnu/asm/posix_types.h \
+ /usr/include/asm-generic/posix_types.h \
+ /usr/include/aarch64-linux-gnu/asm/sve_context.h \
+ /usr/include/aarch64-linux-gnu/bits/types/stack_t.h \
+ /usr/include/aarch64-linux-gnu/sys/ucontext.h \
+ /usr/include/aarch64-linux-gnu/sys/procfs.h \
+ /usr/include/aarch64-linux-gnu/sys/time.h \
+ /usr/include/aarch64-linux-gnu/sys/user.h \
+ /usr/include/aarch64-linux-gnu/bits/procfs.h \
+ /usr/include/aarch64-linux-gnu/bits/procfs-id.h \
+ /usr/include/aarch64-linux-gnu/bits/procfs-prregset.h \
+ /usr/include/aarch64-linux-gnu/bits/procfs-extra.h \
+ /usr/include/aarch64-linux-gnu/bits/sigstack.h \
+ /usr/include/aarch64-linux-gnu/bits/ss_flags.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct_sigstack.h \
+ /usr/include/aarch64-linux-gnu/bits/sigthread.h \
+ /usr/include/aarch64-linux-gnu/bits/signal_ext.h \
+ /usr/include/c++/9/memory /usr/include/c++/9/bits/stl_construct.h \
+ /usr/include/c++/9/bits/stl_uninitialized.h /usr/include/c++/9/utility \
+ /usr/include/c++/9/bits/stl_relops.h \
+ /usr/include/c++/9/bits/stl_tempbuf.h \
+ /usr/include/c++/9/bits/stl_raw_storage_iter.h \
+ /usr/include/c++/9/ext/concurrence.h \
+ /usr/include/c++/9/bits/uses_allocator.h \
+ /usr/include/c++/9/bits/unique_ptr.h /usr/include/c++/9/tuple \
+ /usr/include/c++/9/array /usr/include/c++/9/bits/invoke.h \
+ /usr/include/c++/9/bits/shared_ptr.h \
+ /usr/include/c++/9/bits/shared_ptr_base.h \
+ /usr/include/c++/9/bits/allocated_ptr.h \
+ /usr/include/c++/9/bits/refwrap.h \
+ /usr/include/c++/9/ext/aligned_buffer.h \
+ /usr/include/c++/9/bits/shared_ptr_atomic.h \
+ /usr/include/c++/9/bits/atomic_base.h \
+ /usr/include/c++/9/bits/atomic_lockfree_defines.h \
+ /usr/include/c++/9/backward/auto_ptr.h \
+ /usr/include/c++/9/pstl/glue_memory_defs.h \
+ /usr/include/c++/9/pstl/execution_defs.h \
+ /tmp/tmp.lc8bbDt9II/src/Terminal/Terminal.h /usr/include/c++/9/vector \
+ /usr/include/c++/9/bits/stl_vector.h \
+ /usr/include/c++/9/bits/stl_bvector.h /usr/include/c++/9/bits/vector.tcc \
+ /usr/include/c++/9/sstream /usr/include/c++/9/bits/sstream.tcc \
+ /usr/include/c++/9/stack /usr/include/c++/9/deque \
+ /usr/include/c++/9/bits/stl_deque.h /usr/include/c++/9/bits/deque.tcc \
+ /usr/include/c++/9/bits/stl_stack.h \
+ /tmp/tmp.lc8bbDt9II/src/Terminal/InstructionInterpreter.h \
+ /usr/include/c++/9/any \
+ /tmp/tmp.lc8bbDt9II/src/Terminal/../classes/server_side/Server.h \
+ /usr/include/aarch64-linux-gnu/sys/socket.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct_iovec.h \
+ /usr/include/aarch64-linux-gnu/bits/socket.h \
+ /usr/include/aarch64-linux-gnu/bits/socket_type.h \
+ /usr/include/aarch64-linux-gnu/bits/sockaddr.h \
+ /usr/include/aarch64-linux-gnu/asm/socket.h \
+ /usr/include/asm-generic/socket.h \
+ /usr/include/aarch64-linux-gnu/asm/sockios.h \
+ /usr/include/asm-generic/sockios.h \
+ /usr/include/aarch64-linux-gnu/bits/types/struct_osockaddr.h \
+ /usr/include/netdb.h /usr/include/netinet/in.h \
+ /usr/include/aarch64-linux-gnu/bits/in.h /usr/include/rpc/netdb.h \
+ /usr/include/aarch64-linux-gnu/bits/netdb.h /usr/include/c++/9/cstring \
+ /usr/include/string.h /usr/include/strings.h /usr/include/unistd.h \
+ /usr/include/aarch64-linux-gnu/bits/posix_opt.h \
+ /usr/include/aarch64-linux-gnu/bits/environments.h \
+ /usr/include/aarch64-linux-gnu/bits/confname.h \
+ /usr/include/aarch64-linux-gnu/bits/getopt_posix.h \
+ /usr/include/aarch64-linux-gnu/bits/getopt_core.h \
+ /usr/include/aarch64-linux-gnu/bits/unistd_ext.h \
+ /usr/include/c++/9/thread /usr/include/c++/9/chrono \
+ /usr/include/c++/9/ratio /usr/include/c++/9/ctime \
+ /usr/include/c++/9/bits/parse_numbers.h /usr/include/c++/9/atomic \
+ /usr/include/c++/9/mutex /usr/include/c++/9/bits/std_mutex.h \
+ /usr/include/c++/9/bits/unique_lock.h /usr/include/c++/9/queue \
+ /usr/include/c++/9/bits/stl_heap.h /usr/include/c++/9/bits/stl_queue.h \
+ /usr/include/c++/9/map /usr/include/c++/9/bits/stl_tree.h \
+ /usr/include/c++/9/bits/node_handle.h /usr/include/c++/9/optional \
+ /usr/include/c++/9/bits/enable_special_members.h \
+ /usr/include/c++/9/bits/stl_map.h /usr/include/c++/9/bits/stl_multimap.h \
+ /usr/include/c++/9/bits/erase_if.h \
+ /tmp/tmp.lc8bbDt9II/src/Terminal/../classes/server_side/../general/ServerAction.h \
+ /tmp/tmp.lc8bbDt9II/src/Terminal/../classes/server_side/../general/Enums.h \
+ /tmp/tmp.lc8bbDt9II/src/Terminal/../classes/server_side/../general/ClientAction.h \
+ /tmp/tmp.lc8bbDt9II/src/Terminal/../classes/server_side/RegisteredClient.h \
+ /tmp/tmp.lc8bbDt9II/src/Terminal/../classes/server_side/ChatroomHost.h \
+ /tmp/tmp.lc8bbDt9II/src/Terminal/../classes/client_side/Account.h \
+ /tmp/tmp.lc8bbDt9II/src/Terminal/../classes/client_side/ServerConnection.h \
+ /usr/include/arpa/inet.h \
+ /tmp/tmp.lc8bbDt9II/src/Terminal/../classes/client_side/Account.h \
+ /tmp/tmp.lc8bbDt9II/src/Terminal/../classes/client_side/../general/ServerAction.h \
+ /tmp/tmp.lc8bbDt9II/src/Terminal/../classes/client_side/../general/ClientAction.h
