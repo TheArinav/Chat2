@@ -46,7 +46,10 @@ namespace classes::server_side {
 
     ClientConnection::~ClientConnection() {
         Stop();
-        delete ManagerThread;
+        if (ManagerThread && ManagerThread->joinable()) {
+            ManagerThread->join();
+            delete ManagerThread;
+        }
     }
 
     void ClientConnection::Start(const function<void(shared_ptr<RegisteredClient> Host, int FD, shared_ptr<atomic<bool>> stop)>& listener) {

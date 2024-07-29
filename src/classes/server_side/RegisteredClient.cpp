@@ -107,4 +107,12 @@ namespace classes::server_side {
             Connection->Host = self_shared;
         }
     }
+
+    RegisteredClient::~RegisteredClient() {
+        // Ensure to stop any running threads or ongoing operations
+        if (Connection) {
+            Connection->Stop();
+        }
+    }
+
 } // namespace classes::server_side

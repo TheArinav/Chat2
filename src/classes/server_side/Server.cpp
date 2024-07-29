@@ -25,24 +25,26 @@ namespace classes::server_side {
     }
 
     Server::~Server() {
-        if (ServerFD > 0)
+        if (ServerFD > 0) {
             shutdown(ServerFD, SHUT_RDWR);
+        }
         Running->store(false);
-        if (ListenerThread->joinable())
+        if (ListenerThread && ListenerThread->joinable()) {
             ListenerThread->join();
-        if (EnactRespondThread->joinable())
+            delete ListenerThread;
+        }
+        if (EnactRespondThread && EnactRespondThread->joinable()) {
             EnactRespondThread->join();
-
-        delete ListenerThread;
-        delete EnactRespondThread;
-
+            delete EnactRespondThread;
+        }
+        std::cout << "\n\nExecution ended. Printing server log:" << "\n";
         int i = 1;
-        cout << "\n\nExecution ended. Printing server log:" << "\n";
         while (!ServerLog.empty()) {
-            cout << "\tServer Log[" << i++ << "]= " << ServerLog[0] << "\n";
+            std::cout << "\tServer Log[" << i++ << "]= " << ServerLog[0] << "\n";
             ServerLog.erase(ServerLog.begin());
         }
     }
+
 
     Server::Server(string &&name) :
             ServerName(move(name)) {

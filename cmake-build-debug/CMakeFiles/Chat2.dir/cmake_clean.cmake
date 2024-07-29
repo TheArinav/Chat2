@@ -1,10 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/Chat2.dir/main.cpp.o"
   "CMakeFiles/Chat2.dir/main.cpp.o.d"
-  "CMakeFiles/Chat2.dir/src/Terminal/InstructionInterpreter.cpp.o"
-  "CMakeFiles/Chat2.dir/src/Terminal/InstructionInterpreter.cpp.o.d"
-  "CMakeFiles/Chat2.dir/src/Terminal/Terminal.cpp.o"
-  "CMakeFiles/Chat2.dir/src/Terminal/Terminal.cpp.o.d"
   "CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.o"
   "CMakeFiles/Chat2.dir/src/classes/client_side/Account.cpp.o.d"
   "CMakeFiles/Chat2.dir/src/classes/client_side/ServerConnection.cpp.o"
@@ -21,6 +17,10 @@ file(REMOVE_RECURSE
   "CMakeFiles/Chat2.dir/src/classes/server_side/RegisteredClient.cpp.o.d"
   "CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.o"
   "CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.o.d"
+  "CMakeFiles/Chat2.dir/src/terminal/InstructionInterpreter.cpp.o"
+  "CMakeFiles/Chat2.dir/src/terminal/InstructionInterpreter.cpp.o.d"
+  "CMakeFiles/Chat2.dir/src/terminal/Terminal.cpp.o"
+  "CMakeFiles/Chat2.dir/src/terminal/Terminal.cpp.o.d"
   "Chat2"
   "Chat2.pdb"
 )

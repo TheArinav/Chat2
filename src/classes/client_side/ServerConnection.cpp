@@ -26,13 +26,16 @@ namespace classes::client_side {
 
     ServerConnection::~ServerConnection() {
         SenderRunning->store(false);
-        if (SenderThread->joinable())
+        if (SenderThread && SenderThread->joinable()) {
             SenderThread->join();
-        delete SenderThread;
-        if (ServerFD != -1)
-            close(ServerFD);
-        freeaddrinfo(&*ServerSocket);
+            delete SenderThread;
+            if (ServerFD != -1)
+                close(ServerFD);
+            if (ServerSocket)
+                freeaddrinfo(ServerSocket.get());
+        }
     }
+
 
     bool ServerConnection::Setup(const string &Address) {
         TargetClient = {};
@@ -64,7 +67,8 @@ namespace classes::client_side {
         return true;
     }
 
-    bool ServerConnection::Connect(bool Register, unsigned long long int id, const string &key, const string &DisplayName) {
+    bool
+    ServerConnection::Connect(bool Register, unsigned long long int id, const string &key, const string &DisplayName) {
         if (!Initilized)
             return false;
         if (Register) {
@@ -115,7 +119,7 @@ namespace classes::client_side {
         ss = stringstream(response.Data);
         string ServName, RespMsg;
         ss >> ServName;
-        getline(ss,RespMsg);
+        getline(ss, RespMsg);
         cout << RespMsg << "\n\tServer Name= '" << ServName << "'\n";
 //        SenderThread = new thread([this]() -> void {
 //            while (SenderRunning->load()) {
@@ -152,7 +156,7 @@ namespace classes::client_side {
     void ServerConnection::PushReq(const ServerAction &req) {
         {
             lock_guard<mutex> guard(m_OutgoingRequests);
-            OutgoingRequests.push((ServerAction&&)req);
+            OutgoingRequests.push((ServerAction &&) req);
         }
     }
 
@@ -189,7 +193,7 @@ namespace classes::client_side {
         }
     }
 
-    Account ServerConnection::Register(const string& key, const string& DisplayName) {
+    Account ServerConnection::Register(const string &key, const string &DisplayName) {
         if (DisplayName.empty())
             return {};
         stringstream ss{};
@@ -208,7 +212,7 @@ namespace classes::client_side {
 
         auto response = ClientAction::Deserialize(s_resp);
         ss = stringstream(response.Data);
-        Account res={};
+        Account res = {};
         ss >> res.ID;
         res.ConnectionKey = key;
         return res;
@@ -216,7 +220,7 @@ namespace classes::client_side {
 
     ClientAction ServerConnection::Request(ServerAction action) const {
         auto snd = action.Serialize();
-        send(ServerFD, snd.c_str(),snd.size(), 0);
+        send(ServerFD, snd.c_str(), snd.size(), 0);
         char buffer[1024];
         ssize_t bytesReceived = recv(ServerFD, buffer, sizeof(buffer) - 1, 0);
         if (bytesReceived < 0)
