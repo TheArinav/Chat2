@@ -26,6 +26,7 @@ namespace classes::server_side {
 
         RegisteredClient();
         explicit RegisteredClient(string);
+        ~RegisteredClient();
         RegisteredClient(RegisteredClient&);
         RegisteredClient(RegisteredClient&&) noexcept;
         RegisteredClient& operator=(RegisteredClient&&) noexcept;
