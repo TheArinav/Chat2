@@ -7,6 +7,7 @@ using namespace terminal::InstructionInterpreter;
 
 namespace terminal {
     stack<Context> Terminal::ContextStack = {};
+    unsigned long long Terminal::curRoomID=-1;
     shared_ptr<Server> Terminal::CurrentServer = nullptr;
     shared_ptr<ServerConnection> Terminal::ServerConn = nullptr;
     vector<Account> Terminal::Accounts = {};
@@ -49,8 +50,11 @@ namespace terminal {
     }
 
     void Terminal::PopContext() {
-        if (ContextStack.size() > 1)
-            ContextStack.pop();
+        if (ContextStack.size() <= 1)
+            return;
+        if (ContextStack.top() == Context::CLIENT_LOGGED_IN_ROOM)
+            curRoomID=-1;
+        ContextStack.pop();
     }
 
     string Terminal::GetContext() {
@@ -213,6 +217,86 @@ namespace terminal {
             auto resp = ServerConn->Request(ServerAction(classes::general::ServerActionType::LogoutClient,{},
                                              ss.str()));
             cout << resp.Serialize() << endl;
+            PopContext();
+        } else if (curName == "mcr"){
+            if (!ServerConn)
+                return;
+            if(Accounts.empty())
+                return;
+            stringstream ss;
+            string roomName;
+            vector<unsigned long long> ids;
+            for(auto cur: toHandle.Params)
+                if(cur.Type->LongForm=="--name")
+                    roomName=any_cast<string>(cur.Value);
+                else
+                    ids = any_cast<vector<unsigned long long>>(cur.Value);
+            ss << Accounts[0].ID << " " << Accounts[0].ConnectionKey << " " << roomName;
+            auto roomCreateInst = ServerAction(classes::general::ServerActionType::CreateChatroom,
+                                               {},
+                                               ss.str());
+            auto resp = ServerConn->Request((ServerAction&&)roomCreateInst);
+            unsigned long long roomID;
+            string msg;
+            ss=stringstream(resp.Data);
+            ss >> roomID;
+            getline(ss,msg);
+            cout << msg << endl;
+            Accounts[0].ChatRooms.emplace(roomName,roomID);
+            for(auto curAdd:ids){
+                ss = {};
+                ss << Accounts[0].ID << " "
+                << Accounts[0].ConnectionKey << " "
+                << roomID << " "
+                << curAdd;
+                auto joinInst = ServerAction(classes::general::ServerActionType::AddChatRoomMember,
+                                             {},
+                                             ss.str());
+                if(ServerConn->Request((ServerAction&&)joinInst).ActionType==classes::general::ClientActionType::InformActionFailure) {
+                    cerr << "Failed to add client (id=" << curAdd << ")" << endl;
+                    break;
+                }
+            }
+        } else if (curName == "ccr"){
+            if (toHandle.Params[0].Type->LongForm=="--roomName") {
+                auto name = any_cast<string>(toHandle.Params[0].Value);
+                if(Accounts[0].ChatRooms.find(name)==Accounts[0].ChatRooms.end()){
+                    cerr << "No room by the name '" << name << "' was found on this account";
+                    return;
+                }
+                curRoomID = Accounts[0].ChatRooms[name];
+            }
+            else
+                curRoomID= any_cast<unsigned long long>(toHandle.Params[0].Value);
+            if(ContextStack.top()!= Context::CLIENT_LOGGED_IN_ROOM)
+                PushContext(Context::CLIENT_LOGGED_IN_ROOM);
+            string name;
+            for (auto& kvp : Accounts[0].ChatRooms)
+                if (kvp.second==curRoomID)
+                    name= kvp.first;
+            cout << "Successfully entered room '" <<
+            name << "#" << curRoomID << "'" << endl;
+        } else if (curName == "msg"){
+            if(curRoomID==-1)
+                return;
+            stringstream ss;
+            ss << Accounts[0].ID << " " << Accounts[0].ConnectionKey
+            << " " << curRoomID << " " << any_cast<string>(toHandle.Params[0].Value);
+            auto resp = ServerConn->Request(ServerAction(classes::general::ServerActionType::SendMessage,
+                                                         {},
+                                                         ss.str()));
+            cout << resp.Data << endl;
+        } else if(curName == "sl"){
+            if(!ServerBuilt)
+                return;
+            int i=1;
+            if(CurrentServer->ServerLog.empty())
+                cout<< "Server log is empty." << endl;
+            else
+                cout << "Printing server log:" << endl;
+            for(auto& cur: CurrentServer->ServerLog)
+                cout << "\tServer Log[" << i++ << "]= " << cur << endl;
+
         }
     }
 

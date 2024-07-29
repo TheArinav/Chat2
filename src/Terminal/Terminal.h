@@ -31,6 +31,7 @@ namespace terminal{
          */
         static void StartTerminal();
     private:
+        static unsigned long long curRoomID;
         static mutex ServerMutex;
         static bool VerifyContext(const Instruction&);
         static stack<Context> ContextStack;

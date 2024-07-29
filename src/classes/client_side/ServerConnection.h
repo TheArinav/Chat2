@@ -28,8 +28,10 @@ namespace classes::client_side {
         int ServerFD;
         unique_ptr<atomic<bool>> SenderRunning;
         thread *SenderThread;
+        thread *Receiver;
         queue<ServerAction> OutgoingRequests;
         queue<ClientAction> IngoingResponses;
+        queue<ClientAction> IngoingMessages;
         Account TargetClient;
 
         explicit ServerConnection(const string& Address);
@@ -38,12 +40,13 @@ namespace classes::client_side {
         Account Register(const string&, const string&);
         bool Connect(bool Register, unsigned long long int id=-1, const string& key="", const string &DisplayName="");
 
-        ClientAction Request(ServerAction action) const;
+        ClientAction Request(ServerAction action);
     private:
         void PushReq(const ServerAction& req);
         ClientAction PopResp();
         mutex m_OutgoingRequests;
         mutex m_IngoingResponses;
+        mutex m_IngoingMessages;
         unique_ptr<atomic<bool>> PoppedEmpty;  // Initialize this properly
 
         bool Initilized;
@@ -51,6 +54,8 @@ namespace classes::client_side {
 
         ServerAction PopReq();
         void PushResp(ClientAction resp);
+        void PushMess(ClientAction ms);
+        ClientAction PopMess();
     };
 
 } // client_side

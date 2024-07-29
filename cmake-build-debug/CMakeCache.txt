@@ -235,15 +235,6 @@ ProcessorCount_cmd_nproc:FILEPATH=/usr/bin/nproc
 //Path to a program.
 ProcessorCount_cmd_sysctl:FILEPATH=/usr/sbin/sysctl
 
-//Value Computed by CMake
-Project_BINARY_DIR:STATIC=/tmp/tmp.lc8bbDt9II/cmake-build-debug
-
-//Value Computed by CMake
-Project_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-Project_SOURCE_DIR:STATIC=/tmp/tmp.lc8bbDt9II
-
 
 ########################
 # INTERNAL cache entries

@@ -11,6 +11,7 @@ namespace classes::client_side {
     ServerConnection::ServerConnection(const string &Address) {
         ServerFD = -1;
         Initilized = true;
+        Receiver=nullptr;
         SenderRunning = make_unique<atomic<bool>>();
         SenderRunning->store(false);
         SenderRunning->store(true);
@@ -26,9 +27,12 @@ namespace classes::client_side {
 
     ServerConnection::~ServerConnection() {
         SenderRunning->store(false);
-        if (SenderThread->joinable())
+        if (SenderThread && SenderThread->joinable())
             SenderThread->join();
         delete SenderThread;
+        if(Receiver && Receiver->joinable())
+            Receiver->join();
+        delete Receiver;
         if (ServerFD != -1)
             close(ServerFD);
         freeaddrinfo(&*ServerSocket);
@@ -117,35 +121,35 @@ namespace classes::client_side {
         ss >> ServName;
         getline(ss,RespMsg);
         cout << RespMsg << "\n\tServer Name= '" << ServName << "'\n";
-//        SenderThread = new thread([this]() -> void {
-//            while (SenderRunning->load()) {
-//                auto curReq = PopReq();
-//                if (!PoppedEmpty->load()) {
-//                    string s_req = curReq.Serialize();
-//                    send(ServerFD, s_req.c_str(), s_req.size(), 0);
-//                    sleep(5);
-//                }
-//                char buffer[1024];
-//                ssize_t bytesReceived = recv(ServerFD, &buffer, sizeof buffer, 0);
-//                if (bytesReceived < 0) {
-//                    cerr << "Received response was nullptr\n";
-//                    if (SenderRunning->load())
-//                        continue;
-//                    break;
-//                }
-//
-//                buffer[bytesReceived] = '\0';
-//                auto tmp = string(buffer);
-//                auto response = ClientAction::Deserialize(tmp);
-//
-//                // Temporary:
-//                cout << string(buffer) << "\n";
-//            }
-//        });
-//
-//        sleep(1);
-//        SenderThread->detach();
-        // WIP
+        Receiver = new thread([this]()->void{
+            char buffer[1024];
+            ssize_t bytesReceived = recv(ServerFD, buffer, sizeof(buffer) - 1, 0);
+            if (bytesReceived < 0)
+                return;
+
+            buffer[bytesReceived] = '\0';
+            string r_next;
+            char *deli;
+            if ((deli=strchr(buffer,'$'))!= nullptr) {
+                r_next = string(deli);
+                *deli='\0';
+            }
+            string s_resp(buffer);
+
+            auto response = ClientAction::Deserialize(s_resp);
+            if(response.ActionType!=general::ClientActionType::MessageReceived)
+                PushResp((ClientAction&&)response);
+            else
+                PushMess((ClientAction&&)response);
+
+
+            response = ClientAction::Deserialize(r_next);
+            if(response.ActionType!=general::ClientActionType::MessageReceived)
+                PushResp((ClientAction&&)response);
+            else
+                PushMess((ClientAction&&)response);
+        });
+
         return true;
     }
 
@@ -214,19 +218,32 @@ namespace classes::client_side {
         return res;
     }
 
-    ClientAction ServerConnection::Request(ServerAction action) const {
+    ClientAction ServerConnection::Request(ServerAction action) {
         auto snd = action.Serialize();
         send(ServerFD, snd.c_str(),snd.size(), 0);
-        char buffer[1024];
-        ssize_t bytesReceived = recv(ServerFD, buffer, sizeof(buffer) - 1, 0);
-        if (bytesReceived < 0)
-            return {};
-
-        buffer[bytesReceived] = '\0';
-        string s_resp(buffer);
-
-        auto response = ClientAction::Deserialize(s_resp);
+        while(IngoingResponses.empty());
+        auto response = PopResp();
         return response;
+    }
+
+    void ServerConnection::PushMess(ClientAction act) {
+        {
+            lock_guard<mutex> guard(m_IngoingMessages);
+            IngoingMessages.emplace((ClientAction&&)act);
+        }
+    }
+
+    ClientAction ServerConnection::PopMess() {
+        {
+            lock_guard<mutex> guard(m_IngoingMessages);
+            PoppedEmpty->store(true);
+            if (IngoingMessages.empty())
+                return {};
+            PoppedEmpty->store(false);
+            auto tmp = move(IngoingMessages.front());
+            IngoingMessages.pop();
+            return tmp;
+        }
     }
 
 } // namespace classes::client_side

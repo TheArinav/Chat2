@@ -310,7 +310,8 @@ namespace classes::server_side {
                 case ServerActionType::SendMessage: {
                     unsigned long long rID;
                     string msg;
-                    ss >> id >> key >> rID >> msg;
+                    ss >> id >> key >> rID;
+                    getline(ss,msg);
                     if (VerifyIdentity(id, key)) {
                         bool found = false;
                         ChatroomHost *room = nullptr;
@@ -346,10 +347,13 @@ namespace classes::server_side {
                                 stringstream msgSS{};
                                 msgSS << id << " " << msg;
                                 curMem->PushResponse(ClientAction(ClientActionType::MessageReceived,
-                                                                  curMem->Connection->Address,
+                                                                  {},
                                                                   msgSS.str()));
                             }
                         }
+                        currentRequester->PushResponse(ClientAction(general::ClientActionType::InformActionSuccess,
+                                                                    {},
+                                                                    "Message sent"));
                         logSS << "Message sent in room: '"
                               << room->DisplayName
                               << "#"
@@ -501,7 +505,7 @@ namespace classes::server_side {
                         currentRequester->PushResponse(ClientAction(ClientActionType::InformActionSuccess,
                                                                     currentRequester->Connection->Address,
                                                                     to_string(newCR.RoomID) +
-                                                                    " Chat room was created"));
+                                                                    " Chat room was created$"));
                         currentRequester->PushResponse(ClientAction(ClientActionType::JoinedChatroom,
                                                                     currentRequester->Connection->Address,
                                                                     to_string(newCR.RoomID) + " " + newCR.DisplayName));
@@ -601,7 +605,7 @@ namespace classes::server_side {
 
                     room->Members.push_back(newMember);
                     newMember->PushResponse(ClientAction(ClientActionType::JoinedChatroom,
-                                                         newMember->Connection->Address,
+                                                         {},
                                                          to_string(room->RoomID) + " " + room->DisplayName));
                     stringstream joinMSG;
                     joinMSG << id << key << rID << "Admin added a member to this room: '"
@@ -609,7 +613,9 @@ namespace classes::server_side {
                     PushAction(currentRequester, make_shared<ServerAction>(general::ServerActionType::SendMessage,
                                                                            currentRequester->Connection->Address,
                                                                            joinMSG.str()));
-
+                    currentRequester->PushResponse(ClientAction(general::ClientActionType::InformActionSuccess,
+                                                                {},
+                                                                ""));
                     logSS << "Client: '"
                           << newMember->DisplayName
                           << "#"
