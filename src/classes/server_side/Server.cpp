@@ -345,7 +345,7 @@ namespace classes::server_side {
                             lock_guard<mutex> guard(m_Clients);
                             for (auto &curMem: room->Members) {
                                 stringstream msgSS{};
-                                msgSS << id << " " << msg;
+                                msgSS << id << " " << rID << " " << msg;
                                 curMem->PushResponse(ClientAction(ClientActionType::MessageReceived,
                                                                   {},
                                                                   msgSS.str()));
@@ -608,11 +608,6 @@ namespace classes::server_side {
                                                          {},
                                                          to_string(room->RoomID) + " " + room->DisplayName));
                     stringstream joinMSG;
-                    joinMSG << id << key << rID << "Admin added a member to this room: '"
-                            << newMember->DisplayName << "#" << newMember->ClientID << "'";
-                    PushAction(currentRequester, make_shared<ServerAction>(general::ServerActionType::SendMessage,
-                                                                           currentRequester->Connection->Address,
-                                                                           joinMSG.str()));
                     currentRequester->PushResponse(ClientAction(general::ClientActionType::InformActionSuccess,
                                                                 {},
                                                                 ""));

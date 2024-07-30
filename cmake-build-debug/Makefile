@@ -57,10 +57,10 @@ RM = /usr/local/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /tmp/tmp.lc8bbDt9II
+CMAKE_SOURCE_DIR = /tmp/tmp.vcmDUFBzA6
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /tmp/tmp.lc8bbDt9II/cmake-build-debug
+CMAKE_BINARY_DIR = /tmp/tmp.vcmDUFBzA6/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.lc8bbDt9II/cmake-build-debug/CMakeFiles /tmp/tmp.lc8bbDt9II/cmake-build-debug//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.vcmDUFBzA6/cmake-build-debug/CMakeFiles /tmp/tmp.vcmDUFBzA6/cmake-build-debug//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.lc8bbDt9II/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /tmp/tmp.vcmDUFBzA6/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -152,54 +152,6 @@ main.s: main.cpp.s
 main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/main.cpp.s
 .PHONY : main.cpp.s
-
-src/Terminal/InstructionInterpreter.o: src/Terminal/InstructionInterpreter.cpp.o
-.PHONY : src/Terminal/InstructionInterpreter.o
-
-# target to build an object file
-src/Terminal/InstructionInterpreter.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/Terminal/InstructionInterpreter.cpp.o
-.PHONY : src/Terminal/InstructionInterpreter.cpp.o
-
-src/Terminal/InstructionInterpreter.i: src/Terminal/InstructionInterpreter.cpp.i
-.PHONY : src/Terminal/InstructionInterpreter.i
-
-# target to preprocess a source file
-src/Terminal/InstructionInterpreter.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/Terminal/InstructionInterpreter.cpp.i
-.PHONY : src/Terminal/InstructionInterpreter.cpp.i
-
-src/Terminal/InstructionInterpreter.s: src/Terminal/InstructionInterpreter.cpp.s
-.PHONY : src/Terminal/InstructionInterpreter.s
-
-# target to generate assembly for a file
-src/Terminal/InstructionInterpreter.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/Terminal/InstructionInterpreter.cpp.s
-.PHONY : src/Terminal/InstructionInterpreter.cpp.s
-
-src/Terminal/Terminal.o: src/Terminal/Terminal.cpp.o
-.PHONY : src/Terminal/Terminal.o
-
-# target to build an object file
-src/Terminal/Terminal.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/Terminal/Terminal.cpp.o
-.PHONY : src/Terminal/Terminal.cpp.o
-
-src/Terminal/Terminal.i: src/Terminal/Terminal.cpp.i
-.PHONY : src/Terminal/Terminal.i
-
-# target to preprocess a source file
-src/Terminal/Terminal.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/Terminal/Terminal.cpp.i
-.PHONY : src/Terminal/Terminal.cpp.i
-
-src/Terminal/Terminal.s: src/Terminal/Terminal.cpp.s
-.PHONY : src/Terminal/Terminal.s
-
-# target to generate assembly for a file
-src/Terminal/Terminal.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/Terminal/Terminal.cpp.s
-.PHONY : src/Terminal/Terminal.cpp.s
 
 src/classes/client_side/Account.o: src/classes/client_side/Account.cpp.o
 .PHONY : src/classes/client_side/Account.o
@@ -393,6 +345,54 @@ src/classes/server_side/Server.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/classes/server_side/Server.cpp.s
 .PHONY : src/classes/server_side/Server.cpp.s
 
+src/terminal/InstructionInterpreter.o: src/terminal/InstructionInterpreter.cpp.o
+.PHONY : src/terminal/InstructionInterpreter.o
+
+# target to build an object file
+src/terminal/InstructionInterpreter.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/terminal/InstructionInterpreter.cpp.o
+.PHONY : src/terminal/InstructionInterpreter.cpp.o
+
+src/terminal/InstructionInterpreter.i: src/terminal/InstructionInterpreter.cpp.i
+.PHONY : src/terminal/InstructionInterpreter.i
+
+# target to preprocess a source file
+src/terminal/InstructionInterpreter.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/terminal/InstructionInterpreter.cpp.i
+.PHONY : src/terminal/InstructionInterpreter.cpp.i
+
+src/terminal/InstructionInterpreter.s: src/terminal/InstructionInterpreter.cpp.s
+.PHONY : src/terminal/InstructionInterpreter.s
+
+# target to generate assembly for a file
+src/terminal/InstructionInterpreter.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/terminal/InstructionInterpreter.cpp.s
+.PHONY : src/terminal/InstructionInterpreter.cpp.s
+
+src/terminal/Terminal.o: src/terminal/Terminal.cpp.o
+.PHONY : src/terminal/Terminal.o
+
+# target to build an object file
+src/terminal/Terminal.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/terminal/Terminal.cpp.o
+.PHONY : src/terminal/Terminal.cpp.o
+
+src/terminal/Terminal.i: src/terminal/Terminal.cpp.i
+.PHONY : src/terminal/Terminal.i
+
+# target to preprocess a source file
+src/terminal/Terminal.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/terminal/Terminal.cpp.i
+.PHONY : src/terminal/Terminal.cpp.i
+
+src/terminal/Terminal.s: src/terminal/Terminal.cpp.s
+.PHONY : src/terminal/Terminal.s
+
+# target to generate assembly for a file
+src/terminal/Terminal.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Chat2.dir/build.make CMakeFiles/Chat2.dir/src/terminal/Terminal.cpp.s
+.PHONY : src/terminal/Terminal.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -405,12 +405,6 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
-	@echo "... src/Terminal/InstructionInterpreter.o"
-	@echo "... src/Terminal/InstructionInterpreter.i"
-	@echo "... src/Terminal/InstructionInterpreter.s"
-	@echo "... src/Terminal/Terminal.o"
-	@echo "... src/Terminal/Terminal.i"
-	@echo "... src/Terminal/Terminal.s"
 	@echo "... src/classes/client_side/Account.o"
 	@echo "... src/classes/client_side/Account.i"
 	@echo "... src/classes/client_side/Account.s"
@@ -435,6 +429,12 @@ help:
 	@echo "... src/classes/server_side/Server.o"
 	@echo "... src/classes/server_side/Server.i"
 	@echo "... src/classes/server_side/Server.s"
+	@echo "... src/terminal/InstructionInterpreter.o"
+	@echo "... src/terminal/InstructionInterpreter.i"
+	@echo "... src/terminal/InstructionInterpreter.s"
+	@echo "... src/terminal/Terminal.o"
+	@echo "... src/terminal/Terminal.i"
+	@echo "... src/terminal/Terminal.s"
 .PHONY : help
 
 

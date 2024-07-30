@@ -2,7 +2,7 @@
 #include <iostream>
 #include <csignal>
 #include <memory>
-#include "src/Terminal/Terminal.h"
+#include "src/terminal/Terminal.h"
 
 using namespace std;
 using namespace classes::server_side;

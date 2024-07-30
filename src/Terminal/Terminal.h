@@ -13,7 +13,11 @@
 #include "InstructionInterpreter.h"
 #include "../classes/server_side/Server.h"
 #include "../classes/client_side/Account.h"
-#include "../classes/client_side/ServerConnection.h"
+#include "util/SafeVector.h"
+
+namespace classes::client_side{
+    class ServerConnection;
+}
 
 using namespace std;
 using namespace classes::server_side;
@@ -24,23 +28,26 @@ namespace terminal{
     public:
         static shared_ptr<Server> CurrentServer;
         static shared_ptr<ServerConnection> ServerConn;
-        static vector<Account> Accounts;
+        static util::SafeVector<Account> Accounts;
 
         /**
          * Start the terminal.
          */
         static void StartTerminal();
+
+        static Context GetContext();
     private:
+        static stack<Context> ContextStack;
         static unsigned long long curRoomID;
         static mutex ServerMutex;
+        static mutex m_Context;
         static bool VerifyContext(const Instruction&);
-        static stack<Context> ContextStack;
         static bool ServerBuilt;
         static void PrintLogo();
         static void clearTerminal();
         static void PushContext(Context);
         static void PopContext();
-        static string GetContext();
+        static string SerializeContext();
         static void HandleInstruction(const Instruction&);
     };
 }

@@ -4,6 +4,9 @@
 #include <sstream>
 
 #include "ServerConnection.h"
+#include "../../terminal/Terminal.h"
+
+using namespace terminal;
 
 namespace classes::client_side {
     const char *port = "3490";
@@ -11,10 +14,10 @@ namespace classes::client_side {
     ServerConnection::ServerConnection(const string &Address) {
         ServerFD = -1;
         Initilized = true;
-        Receiver=nullptr;
-        SenderRunning = make_unique<atomic<bool>>();
-        SenderRunning->store(false);
-        SenderRunning->store(true);
+        Receiver = nullptr;
+        Expecting = ExpectStatus::None;
+        Connected = make_unique<atomic<bool>>();
+        Connected->store(false);
         OutgoingRequests = {};
         IngoingResponses = {};
         PoppedEmpty = make_unique<atomic<bool>>(false);  // Initialize PoppedEmpty
@@ -26,11 +29,11 @@ namespace classes::client_side {
     }
 
     ServerConnection::~ServerConnection() {
-        SenderRunning->store(false);
-        if (SenderThread && SenderThread->joinable())
-            SenderThread->join();
-        delete SenderThread;
-        if(Receiver && Receiver->joinable())
+        Connected->store(false);
+        if (ResponseProcessor && ResponseProcessor->joinable())
+            ResponseProcessor->join();
+        delete ResponseProcessor;
+        if (Receiver && Receiver->joinable())
             Receiver->join();
         delete Receiver;
         if (ServerFD != -1)
@@ -119,78 +122,92 @@ namespace classes::client_side {
         ss = stringstream(response.Data);
         string ServName, RespMsg;
         ss >> ServName;
-        getline(ss,RespMsg);
+        getline(ss, RespMsg);
         cout << RespMsg << "\n\tServer Name= '" << ServName << "'\n";
+        Connected->store(true);
         Receiver = new thread([this]()->void{
-            char buffer[1024];
-            ssize_t bytesReceived = recv(ServerFD, buffer, sizeof(buffer) - 1, 0);
-            if (bytesReceived < 0)
-                return;
+            while(Connected->load()){
+                char buffer[1024];
+                ssize_t bytesReceived = recv(ServerFD, buffer, sizeof(buffer) - 1, 0);
+                if (bytesReceived < 0)
+                    return;
 
-            buffer[bytesReceived] = '\0';
-            string r_next;
-            char *deli;
-            if ((deli=strchr(buffer,'$'))!= nullptr) {
-                r_next = string(deli);
-                *deli='\0';
+                buffer[bytesReceived] = '\0';
+                string r_next;
+                char *deli;
+                if ((deli=strchr(buffer,'$'))!= nullptr) {
+                    r_next = string(deli);
+                    *deli='\0';
+                }
+                string s_resp(buffer);
+
+                auto response = ClientAction::Deserialize(s_resp);
+                if(response.ActionType != general::ClientActionType::MessageReceived)
+                    PushResp(std::move(response));
+                else
+                    PushMess(std::move(response));
+
+                if (!r_next.empty()) {
+                    response = ClientAction::Deserialize(r_next);
+                    if(response.ActionType != general::ClientActionType::MessageReceived)
+                        PushResp(std::move(response));
+                    else
+                        PushMess(std::move(response));
+                }
             }
-            string s_resp(buffer);
-
-            auto response = ClientAction::Deserialize(s_resp);
-            if(response.ActionType!=general::ClientActionType::MessageReceived)
-                PushResp((ClientAction&&)response);
-            else
-                PushMess((ClientAction&&)response);
-
-
-            response = ClientAction::Deserialize(r_next);
-            if(response.ActionType!=general::ClientActionType::MessageReceived)
-                PushResp((ClientAction&&)response);
-            else
-                PushMess((ClientAction&&)response);
         });
 
+        ResponseProcessor = new thread([this]()->void {
+            while (Connected->load()) {
+                auto cont = Terminal::GetContext();
+                auto validContext = (cont == terminal::Context::CLIENT_LOGGED_IN || cont == terminal::Context::CLIENT_LOGGED_IN_ROOM);
+                if (validContext) {
+                    auto mess = PopMess();
+                    if (!PoppedEmpty->load()) {
+                        stringstream ss(mess.Data);
+                        unsigned long long Sender, Room;
+                        string msgContent;
+                        ss >> Sender >> Room;
+                        getline(ss, msgContent);
+
+                        string RoomName;
+                        for (auto &curR: Terminal::Accounts[0].ChatRooms)
+                            if (curR.second == Room)
+                                RoomName = curR.first;
+
+                        cout << "[INFO]: Received Message from chatroom [" << RoomName
+                             << "#" << Room << "] with sender id '" << Sender << "'.\n\tMessage:" << msgContent
+                             << endl;
+                        Terminal::Accounts[0].Messages.emplace_back(Room, Sender, msgContent);
+                    }
+                }
+                switch (Expecting.load()) {
+                    case ExpectStatus::None: {
+                        auto resp = PopResp();
+                        if (resp.ActionType == general::ClientActionType::InformActionSuccess ||
+                            resp.ActionType == general::ClientActionType::InformActionFailure) {
+                            PushResp(move(resp));
+                            continue;
+                        }
+                        if (resp.ActionType == general::ClientActionType::JoinedChatroom) {
+                            stringstream ss(resp.Data);
+                            unsigned long long id;
+                            string name;
+                            ss >> id;
+                            getline(ss, name);
+                            terminal::Terminal::Accounts[0].ChatRooms.emplace(name, id);
+                            cout << "[INFO]: You were added to the chatroom [" << name << "#" << id << "]" << endl;
+                        }
+                        break;
+                    }
+                    default: {
+                        Expecting.store(ExpectStatus::None);
+                        break;
+                    }
+                }
+            }
+        });
         return true;
-    }
-
-    void ServerConnection::PushReq(const ServerAction &req) {
-        {
-            lock_guard<mutex> guard(m_OutgoingRequests);
-            OutgoingRequests.push((ServerAction&&)req);
-        }
-    }
-
-    ServerAction ServerConnection::PopReq() {
-        {
-            lock_guard<mutex> guard(m_OutgoingRequests);
-            PoppedEmpty->store(true);
-            if (OutgoingRequests.empty())
-                return {};
-            PoppedEmpty->store(false);
-            auto tmp = move(OutgoingRequests.front());
-            OutgoingRequests.pop();
-            return tmp;
-        }
-    }
-
-    void ServerConnection::PushResp(ClientAction resp) {
-        {
-            lock_guard<mutex> guard(m_IngoingResponses);
-            IngoingResponses.push(move(resp));
-        }
-    }
-
-    ClientAction ServerConnection::PopResp() {
-        {
-            lock_guard<mutex> guard(m_IngoingResponses);
-            PoppedEmpty->store(true);
-            if (IngoingResponses.empty())
-                return {};
-            PoppedEmpty->store(false);
-            auto tmp = move(IngoingResponses.front());
-            IngoingResponses.pop();
-            return tmp;
-        }
     }
 
     Account ServerConnection::Register(const string& key, const string& DisplayName) {
@@ -218,18 +235,59 @@ namespace classes::client_side {
         return res;
     }
 
-    ClientAction ServerConnection::Request(ServerAction action) {
+    ClientAction ServerConnection::Request(ServerAction action, ExpectStatus expect) {
         auto snd = action.Serialize();
-        send(ServerFD, snd.c_str(),snd.size(), 0);
-        while(IngoingResponses.empty());
+        Expecting.store(expect);
+        send(ServerFD, snd.c_str(), snd.size(), 0);
+        while (IngoingResponses.empty());
         auto response = PopResp();
         return response;
+    }
+
+    void ServerConnection::PushReq(const ServerAction& req) {
+        {
+            lock_guard<mutex> guard(m_OutgoingRequests);
+            OutgoingRequests.push(std::move(const_cast<ServerAction&>(req)));
+        }
+    }
+
+    ServerAction ServerConnection::PopReq() {
+        {
+            lock_guard<mutex> guard(m_OutgoingRequests);
+            PoppedEmpty->store(true);
+            if (OutgoingRequests.empty())
+                return {};
+            PoppedEmpty->store(false);
+            auto tmp = std::move(OutgoingRequests.front());
+            OutgoingRequests.pop();
+            return tmp;
+        }
+    }
+
+    void ServerConnection::PushResp(ClientAction resp) {
+        {
+            lock_guard<mutex> guard(m_IngoingResponses);
+            IngoingResponses.push(std::move(resp));
+        }
+    }
+
+    ClientAction ServerConnection::PopResp() {
+        {
+            lock_guard<mutex> guard(m_IngoingResponses);
+            PoppedEmpty->store(true);
+            if (IngoingResponses.empty())
+                return {};
+            PoppedEmpty->store(false);
+            auto tmp = std::move(IngoingResponses.front());
+            IngoingResponses.pop();
+            return tmp;
+        }
     }
 
     void ServerConnection::PushMess(ClientAction act) {
         {
             lock_guard<mutex> guard(m_IngoingMessages);
-            IngoingMessages.emplace((ClientAction&&)act);
+            IngoingMessages.emplace(std::move(act));
         }
     }
 
@@ -240,10 +298,12 @@ namespace classes::client_side {
             if (IngoingMessages.empty())
                 return {};
             PoppedEmpty->store(false);
-            auto tmp = move(IngoingMessages.front());
+            auto tmp = std::move(IngoingMessages.front());
             IngoingMessages.pop();
             return tmp;
         }
     }
+
+
 
 } // namespace classes::client_side

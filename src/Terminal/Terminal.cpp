@@ -2,15 +2,17 @@
 #include "InstructionInterpreter.h"
 #include <mutex>
 #include <iostream>
+#include "../classes/client_side/ServerConnection.h"
 
 using namespace terminal::InstructionInterpreter;
 
 namespace terminal {
+    mutex Terminal::m_Context={};
     stack<Context> Terminal::ContextStack = {};
     unsigned long long Terminal::curRoomID=-1;
     shared_ptr<Server> Terminal::CurrentServer = nullptr;
     shared_ptr<ServerConnection> Terminal::ServerConn = nullptr;
-    vector<Account> Terminal::Accounts = {};
+    util::SafeVector<Account> Terminal::Accounts = {};
     mutex Terminal::ServerMutex = {};
     bool Terminal::ServerBuilt= false;
 
@@ -44,21 +46,27 @@ namespace terminal {
     }
 
     void Terminal::PushContext(Context cntxt) {
-        if (ContextStack.top() == cntxt)
-            return;
-        ContextStack.push(cntxt);
+        {
+            lock_guard<mutex> guard (m_Context);
+            if (ContextStack.top() == cntxt)
+                return;
+            ContextStack.push(cntxt);
+        }
     }
 
     void Terminal::PopContext() {
-        if (ContextStack.size() <= 1)
-            return;
-        if (ContextStack.top() == Context::CLIENT_LOGGED_IN_ROOM)
-            curRoomID=-1;
-        ContextStack.pop();
+        {
+            lock_guard<mutex> guard (m_Context);
+            if (ContextStack.size() <= 1)
+                return;
+            if (ContextStack.top() == Context::CLIENT_LOGGED_IN_ROOM)
+                curRoomID = -1;
+            ContextStack.pop();
+        }
     }
 
-    string Terminal::GetContext() {
-        switch (ContextStack.top()) {
+    string Terminal::SerializeContext() {
+        switch (GetContext()) {
 
             default: {
                 return "[ILLEGAL_CONTEXT]";
@@ -82,75 +90,70 @@ namespace terminal {
     }
 
     void Terminal::HandleInstruction(const Instruction &toHandle) {
-        auto&& curName = (string&&)toHandle.Type->ShortForm ;
+        auto &&curName = (string &&) toHandle.Type->ShortForm;
 
-        if(!VerifyContext(toHandle)){
+        if (!VerifyContext(toHandle)) {
             cout << "This instruction can't be performed under the current context. Instruction aborted;" << endl;
             return;
         }
 
         if (curName == "scx")
-            cout << "Current Context is: " << GetContext() << endl;
-        else if(curName == "s"){
+            cout << "Current Context is: " << SerializeContext() << endl;
+        else if (curName == "s") {
             auto reqContext = any_cast<string>(toHandle.Params[0].Value);
-            if(reqContext=="server")
+            if (reqContext == "server")
                 ContextStack.push(Context::SERVER);
-            else if (reqContext=="client")
+            else if (reqContext == "client")
                 ContextStack.push(Context::CLIENT_LOGGED_OUT);
             else
                 cerr << "Something went wrong in the 'start' instruction";
             cout << "Successfully started '" << reqContext << "'" << endl;
-        }
-        else if (curName == "ecx"){
-            if(ContextStack.top()==Context::NONE) {
+        } else if (curName == "ecx") {
+            if (GetContext() == Context::NONE) {
                 cout << "You can not exit a [NONE] context. Instruction aborted;" << endl;
                 return;
             }
-            auto prevC = ContextStack.top();
-            if(prevC==Context::CLIENT_LOGGED_IN){
-                bool flag=false;
+            auto prevC = GetContext();
+            if (prevC == Context::CLIENT_LOGGED_IN) {
+                bool flag = false;
                 do {
                     cout << "You are currently in a [Logged In] context. Do you wish to log out? [Y/n]" << endl;
                     string sIn;
                     cin >> sIn;
                     if (sIn == "Y" || sIn == "y")
-                        HandleInstruction(InstructionInterpreter::Parse("sd"));
-                    else if (sIn != "N" || sIn != "n")
-                    {
+                        HandleInstruction(InstructionInterpreter::Parse("lo"));
+                    else if (sIn != "N" || sIn != "n") {
                         cout << "Invalid response, try again." << endl;
                         flag = true;
                         continue;
                     }
-                    flag=false;
-                }while (flag);
-            }else if (prevC==Context::SERVER && ServerBuilt){
+                    flag = false;
+                } while (flag);
+            } else if (prevC == Context::SERVER && ServerBuilt) {
                 bool flag = false;
-                do{
-                    cout << "To exit this context, you have to shutdown the server. Would you like to proceed? [Y/n]" << endl;
+                do {
+                    cout << "To exit this context, you have to shutdown the server. Would you like to proceed? [Y/n]"
+                         << endl;
                     string sIn;
                     cin >> sIn;
-                    if (sIn == "Y" || sIn == "y")
-                    {
+                    if (sIn == "Y" || sIn == "y") {
                         CurrentServer->Stop();
                         CurrentServer.reset();
-                        ServerBuilt=false;
-                    }
-                    else if (sIn != "N" || sIn != "n")
-                    {
+                        ServerBuilt = false;
+                    } else if (sIn != "N" || sIn != "n") {
                         cout << "Invalid response, try again." << endl;
                         flag = true;
                         continue;
                     }
-                    flag=false;
+                    flag = false;
                 } while (flag);
             }
-            cout << "You have left the context: " << GetContext() << endl;
+            cout << "You have left the context: " << SerializeContext() << endl;
             PopContext();
-        }
-        else if (curName == "ss"){
-            auto&& name = any_cast<string>(toHandle.Params[0].Value);
+        } else if (curName == "ss") {
+            auto &&name = any_cast<string>(toHandle.Params[0].Value);
             auto c_name = string(name);
-            CurrentServer = make_shared<Server>((string&&)name);
+            CurrentServer = make_shared<Server>((string &&) name);
             CurrentServer->Start();
             ServerBuilt = true;
             cout << "Created and started server '" << c_name << "'" << endl;
@@ -160,145 +163,144 @@ namespace terminal {
                 addr = CurrentServer->IPSTR;
             }
             cout << "Server address is: '" << addr << "'" << endl;
-        }
-        else if (curName=="sd"){
-            if(!ServerBuilt){
+        } else if (curName == "sd") {
+            if (!ServerBuilt) {
                 cout << "No server to shutdown. Instruction aborted;" << endl;
                 return;
             }
             CurrentServer->Stop();
             CurrentServer.reset();
-            ServerBuilt= false;
-        }
-        else if (curName=="reg"){
+            ServerBuilt = false;
+        } else if (curName == "reg") {
             string key;
             string dispName;
             string addr;
-            for (auto cur :toHandle.Params){
-                if(cur.Type->ShortForm=="-sa")
+            for (auto cur: toHandle.Params) {
+                if (cur.Type->ShortForm == "-sa")
                     addr = any_cast<string>(cur.Value);
-                else if(cur.Type->ShortForm=="-cdn")
+                else if (cur.Type->ShortForm == "-cdn")
                     dispName = any_cast<string>(cur.Value);
                 else
                     key = any_cast<string>(cur.Value);
             }
-            if(!ServerConn)
-                ServerConn= make_shared<ServerConnection>(addr);
-            auto Acc = ServerConn->Register(key,dispName);
+            if (!ServerConn)
+                ServerConn = make_shared<ServerConnection>(addr);
+            auto Acc = ServerConn->Register(key, dispName);
             Accounts.push_back(Acc);
-            cout << "Created account with assigned id= '" << Accounts[Accounts.size()-1].ID << "'" << endl;
-        }
-        else if(curName == "li"){
+            cout << "Created account with assigned id= '" << Accounts[Accounts.size() - 1].ID << "'" << endl;
+        } else if (curName == "li") {
             unsigned long long id;
             string addr;
             string key;
-            for (auto cur :toHandle.Params){
-                if(cur.Type->ShortForm=="-i")
+            for (auto cur: toHandle.Params) {
+                if (cur.Type->ShortForm == "-i")
                     id = any_cast<unsigned long long>(cur.Value);
-                else if(cur.Type->ShortForm=="-key")
+                else if (cur.Type->ShortForm == "-key")
                     key = any_cast<string>(cur.Value);
                 else
                     addr = any_cast<string>(cur.Value);
             }
-            if(!ServerConn)
-                ServerConn= make_shared<ServerConnection>(addr);
-            if(ServerConn->Connect(false, id,key)){
+            if (!ServerConn)
+                ServerConn = make_shared<ServerConnection>(addr);
+            if (ServerConn->Connect(false, id, key)) {
                 PushContext(Context::CLIENT_LOGGED_IN);
-            }else{
+            } else {
                 cerr << "Login failed." << endl;
             }
-        }else if (curName == "lo"){
+        } else if (curName == "lo") {
             if (!ServerConn)
                 return;
-            if(Accounts.empty())
+            if (Accounts.empty())
                 return;
             stringstream ss;
             ss << Accounts[0].ID << " " << Accounts[0].ConnectionKey;
-            auto resp = ServerConn->Request(ServerAction(classes::general::ServerActionType::LogoutClient,{},
-                                             ss.str()));
+            auto resp = ServerConn->Request(ServerAction(classes::general::ServerActionType::LogoutClient, {},
+                                                         ss.str()), classes::client_side::ExpectStatus::RegularInform);
             cout << resp.Serialize() << endl;
             PopContext();
-        } else if (curName == "mcr"){
+        } else if (curName == "mcr") {
             if (!ServerConn)
                 return;
-            if(Accounts.empty())
+            if (Accounts.empty())
                 return;
             stringstream ss;
             string roomName;
             vector<unsigned long long> ids;
-            for(auto cur: toHandle.Params)
-                if(cur.Type->LongForm=="--name")
-                    roomName=any_cast<string>(cur.Value);
+            for (auto cur: toHandle.Params)
+                if (cur.Type->LongForm == "--name")
+                    roomName = any_cast<string>(cur.Value);
                 else
                     ids = any_cast<vector<unsigned long long>>(cur.Value);
             ss << Accounts[0].ID << " " << Accounts[0].ConnectionKey << " " << roomName;
             auto roomCreateInst = ServerAction(classes::general::ServerActionType::CreateChatroom,
                                                {},
                                                ss.str());
-            auto resp = ServerConn->Request((ServerAction&&)roomCreateInst);
+            auto resp = ServerConn->Request((ServerAction &&) roomCreateInst,
+                                            classes::client_side::ExpectStatus::RegularInform);
             unsigned long long roomID;
             string msg;
-            ss=stringstream(resp.Data);
+            ss = stringstream(resp.Data);
             ss >> roomID;
-            getline(ss,msg);
+            getline(ss, msg);
             cout << msg << endl;
-            Accounts[0].ChatRooms.emplace(roomName,roomID);
-            for(auto curAdd:ids){
+            Accounts[0].ChatRooms.emplace(roomName, roomID);
+            for (auto curAdd: ids) {
                 ss = {};
                 ss << Accounts[0].ID << " "
-                << Accounts[0].ConnectionKey << " "
-                << roomID << " "
-                << curAdd;
+                   << Accounts[0].ConnectionKey << " "
+                   << roomID << " "
+                   << curAdd;
                 auto joinInst = ServerAction(classes::general::ServerActionType::AddChatRoomMember,
                                              {},
                                              ss.str());
-                if(ServerConn->Request((ServerAction&&)joinInst).ActionType==classes::general::ClientActionType::InformActionFailure) {
+                if (ServerConn->Request((ServerAction &&) joinInst,
+                                        classes::client_side::ExpectStatus::RegularInform).ActionType ==
+                    classes::general::ClientActionType::InformActionFailure) {
                     cerr << "Failed to add client (id=" << curAdd << ")" << endl;
                     break;
                 }
             }
-        } else if (curName == "ccr"){
-            if (toHandle.Params[0].Type->LongForm=="--roomName") {
+        } else if (curName == "ccr") {
+            if (toHandle.Params[0].Type->LongForm == "--roomName") {
                 auto name = any_cast<string>(toHandle.Params[0].Value);
-                if(Accounts[0].ChatRooms.find(name)==Accounts[0].ChatRooms.end()){
+                if (Accounts[0].ChatRooms.find(name) == Accounts[0].ChatRooms.end()) {
                     cerr << "No room by the name '" << name << "' was found on this account";
                     return;
                 }
                 curRoomID = Accounts[0].ChatRooms[name];
-            }
-            else
-                curRoomID= any_cast<unsigned long long>(toHandle.Params[0].Value);
-            if(ContextStack.top()!= Context::CLIENT_LOGGED_IN_ROOM)
+            } else
+                curRoomID = any_cast<unsigned long long>(toHandle.Params[0].Value);
+            if (GetContext()!= Context::CLIENT_LOGGED_IN_ROOM)
                 PushContext(Context::CLIENT_LOGGED_IN_ROOM);
             string name;
-            for (auto& kvp : Accounts[0].ChatRooms)
-                if (kvp.second==curRoomID)
-                    name= kvp.first;
-            cout << "Successfully entered room '" <<
-            name << "#" << curRoomID << "'" << endl;
-        } else if (curName == "msg"){
-            if(curRoomID==-1)
+            for (auto &kvp: Accounts[0].ChatRooms)
+                if (kvp.second == curRoomID)
+                    name = kvp.first;
+            cout << "Successfully entered room '"
+                 << name << "#" << curRoomID << "'" << endl;
+        } else if (curName == "msg") {
+            if (curRoomID == -1)
                 return;
             stringstream ss;
             ss << Accounts[0].ID << " " << Accounts[0].ConnectionKey
-            << " " << curRoomID << " " << any_cast<string>(toHandle.Params[0].Value);
+               << " " << curRoomID << " " << any_cast<string>(toHandle.Params[0].Value);
             auto resp = ServerConn->Request(ServerAction(classes::general::ServerActionType::SendMessage,
                                                          {},
-                                                         ss.str()));
+                                                         ss.str()), classes::client_side::ExpectStatus::RegularInform);
             cout << resp.Data << endl;
-        } else if(curName == "sl"){
-            if(!ServerBuilt)
+        } else if (curName == "sl") {
+            if (!ServerBuilt)
                 return;
-            int i=1;
-            if(CurrentServer->ServerLog.empty())
-                cout<< "Server log is empty." << endl;
+            int i = 1;
+            if (CurrentServer->ServerLog.empty())
+                cout << "Server log is empty." << endl;
             else
                 cout << "Printing server log:" << endl;
-            for(auto& cur: CurrentServer->ServerLog)
+            for (auto &cur: CurrentServer->ServerLog)
                 cout << "\tServer Log[" << i++ << "]= " << cur << endl;
-
         }
     }
+
 
     void Terminal::StartTerminal() {
         clearTerminal();
@@ -327,7 +329,7 @@ namespace terminal {
 
     bool Terminal::VerifyContext(const Instruction& check) {
         auto&& req = check.Type->ValidContext;
-        auto&& cur = ContextStack.top();
+        auto&& cur = GetContext();
 
         if(req==Context::ANY)
             return true;
@@ -339,5 +341,12 @@ namespace terminal {
             return true;
 
         return false;
+    }
+
+    Context Terminal::GetContext() {
+        {
+            lock_guard<mutex> guard (m_Context);
+            return ContextStack.top();
+        }
     }
 }

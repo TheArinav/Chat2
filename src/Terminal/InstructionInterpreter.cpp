@@ -53,7 +53,7 @@ namespace terminal {
         bool stop = false;
         InstructionType res = {};
 
-        //region GetContext
+        //region SerializeContext
         {
             for (i = 0; i < inp.size() && !stop; stop = inp[i++] == ':');
             if (!stop)

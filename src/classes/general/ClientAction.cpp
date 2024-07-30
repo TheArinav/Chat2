@@ -76,13 +76,13 @@ namespace classes::general {
         char tmpCannoname[1024];
         ss >> tmpCannoname;
         if (string(tmpCannoname) != "NULL") {
-            action.ai_canonname_str = std::move(tmpCannoname);
+            action.ai_canonname_str = tmpCannoname;
             action.Address.ai_canonname = strdup(tmpCannoname);
         }
         ss >> action.Address.ai_flags;
         ss >> action.Address.ai_protocol;
-        ss >> ws;
-        getline(ss, action.Data, '\0'); // Get the rest of the string as Data
+        ss.ignore(); // Ignore the space before the data
+        getline(ss, action.Data); // Get the rest of the string as Data
         return action;
     }
 } // namespace classes::general

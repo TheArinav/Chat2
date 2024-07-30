@@ -20,18 +20,27 @@ typedef addrinfo AddressInfo;
 using namespace std;
 using namespace classes::general;
 
+namespace terminal{
+    class Terminal;
+}
+
 namespace classes::client_side {
 
+    enum class ExpectStatus{
+        None=0,
+        RegularInform=1
+    };
     class ServerConnection {
     public:
         shared_ptr<AddressInfo> ServerSocket;
         int ServerFD;
-        unique_ptr<atomic<bool>> SenderRunning;
-        thread *SenderThread;
+        unique_ptr<atomic<bool>> Connected;
+        thread *ResponseProcessor;
         thread *Receiver;
         queue<ServerAction> OutgoingRequests;
         queue<ClientAction> IngoingResponses;
         queue<ClientAction> IngoingMessages;
+        atomic<ExpectStatus> Expecting;
         Account TargetClient;
 
         explicit ServerConnection(const string& Address);
@@ -40,7 +49,7 @@ namespace classes::client_side {
         Account Register(const string&, const string&);
         bool Connect(bool Register, unsigned long long int id=-1, const string& key="", const string &DisplayName="");
 
-        ClientAction Request(ServerAction action);
+        ClientAction Request(ServerAction action, ExpectStatus expect);
     private:
         void PushReq(const ServerAction& req);
         ClientAction PopResp();

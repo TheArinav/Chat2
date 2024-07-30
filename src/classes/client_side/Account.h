@@ -16,7 +16,7 @@ namespace classes::client_side {
         string ConnectionKey;
         map<string, unsigned long long> Friends;
         map<string, unsigned long long> ChatRooms;
-        vector<tuple<string, unsigned long long, string>> Messages;
+        vector<tuple<unsigned long long, unsigned long long, string>> Messages;
 
         Account();
     };
