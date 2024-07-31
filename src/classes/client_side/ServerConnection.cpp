@@ -304,6 +304,4 @@ namespace classes::client_side {
         }
     }
 
-
-
 } // namespace classes::client_side
